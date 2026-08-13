@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GNRE — Central de Diagnóstico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #071A3D;
+    --ink-2: #15316B;
+    --blue: #0A4EE4;
+    --blue-deep: #0A3FB0;
+    --blue-soft: #E4EBFC;
+    --gold: #F2B33D;
+    --gold-deep: #d99613;
+    --gold-soft: #FCEFD2;
+    --green: #17A673;
+    --green-soft: #E1F6EC;
+    --danger: #E64E36;
+    --danger-soft: #FCE7E2;
+    --purple: #6D5DD3;
+    --purple-soft: #EAE7FB;
+    --teal: #0E9488;
+    --teal-soft: #DFF3F1;
+    --gray: #5C6B8A;
+    --gray-soft: #EEF1F8;
+    --bg: #EEF2FB;
+    --bg-panel: #F5F8FE;
+    --bg-panel-alt: #EAF0FC;
+    --bg-card: #FFFFFF;
+    --text: #071A3D;
+    --text-muted: #445071;
+    --text-faint: #8593B0;
+    --border: #DCE3F5;
+    --border-strong: #C4D0EE;
+    --shadow: 0 1px 2px rgba(11,36,51,.05), 0 14px 32px -20px rgba(11,36,51,.3);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.55;
+    padding-bottom:80px;
+  }
+  .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;}
+  .display{font-family:'Sora', sans-serif;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    max-width:1100px; margin:0 auto; padding:40px 32px 24px;
+    position:relative;
+  }
+  .hero .brand{display:flex; align-items:center; margin-bottom:22px;}
+  .hero .brand svg{height:30px; width:auto; display:block;}
+  .hero h1{
+    font-family:'Sora', sans-serif;
+    font-weight:700;
+    font-size:clamp(28px, 4vw, 40px);
+    letter-spacing:-0.5px;
+    max-width:780px;
+  }
+  .hero .accent{color:var(--gold-deep);}
+  .hero p.lede{
+    color:var(--text-muted);
+    max-width:600px;
+    margin-top:12px;
+    font-size:16px;
+  }
+
+  /* ---------- TOOLBAR ---------- */
+  .toolbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(238,242,251,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+    padding:14px 32px;
+  }
+  .toolbar-inner{
+    max-width:1100px; margin:0 auto;
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+  }
+  #search{
+    flex:1; min-width:220px;
+    background:var(--bg-panel);
+    border:1px solid var(--border-strong);
+    color:var(--text);
+    padding:10px 14px;
+    border-radius:6px;
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+  }
+  #search::placeholder{color:var(--text-faint);}
+  #search:focus{outline:2px solid var(--blue); outline-offset:1px;}
+  .chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size:12px;
+    padding:8px 13px;
+    border-radius:20px;
+    border:1px solid var(--border-strong);
+    background:transparent;
+    color:var(--text-muted);
+    cursor:pointer;
+    transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .chip:hover{border-color:var(--blue); color:var(--text);}
+  .chip.active{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600;}
+  .chip:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+  #resultCount{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px; color:var(--text-faint);
+    padding:0 32px; max-width:1100px; margin:10px auto 0;
+  }
+
+  main{max-width:1100px; margin:0 auto; padding:0 32px;}
+
+  /* ---------- CATEGORY BLOCKS ---------- */
+  .category-block{margin-top:56px;}
+  .cat-head{display:flex; align-items:baseline; gap:14px; margin-bottom:6px;}
+  .cat-tag{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:11px; letter-spacing:1px;
+    padding:3px 9px; border-radius:3px; text-transform:uppercase; font-weight:600;
+  }
+  .cat-head h2{font-family:'Sora', sans-serif; font-size:24px; font-weight:600;}
+  .cat-intro{color:var(--text-muted); font-size:14.5px; max-width:680px; margin-bottom:22px;}
+
+  .cat-A .cat-tag{background:var(--gold-soft); color:var(--gold-deep);}
+  .cat-B .cat-tag{background:var(--danger-soft); color:var(--danger);}
+  .cat-C .cat-tag{background:var(--blue-soft); color:var(--blue-deep);}
+  .cat-D .cat-tag{background:var(--purple-soft); color:var(--purple);}
+  .cat-E .cat-tag{background:var(--teal-soft); color:var(--teal);}
+
+  /* ---------- CARD ---------- */
+  .cards{display:grid; grid-template-columns:repeat(auto-fit, minmax(310px, 1fr)); gap:16px;}
+  .card{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px 20px 18px;
+    position:relative;
+    box-shadow:var(--shadow);
+    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{border-color:var(--blue); transform:translateY(-2px); box-shadow:0 4px 14px -6px rgba(10,78,228,0.25), var(--shadow);}
+  .card::before{
+    content:"";
+    position:absolute; top:0; left:16px; right:16px; height:0;
+    border-top:1px dashed var(--border-strong);
+  }
+  .card-top{display:flex; justify-content:flex-end; align-items:flex-start; gap:10px; margin-bottom:10px;}
+  .sev{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase;
+    padding:3px 8px; border-radius:3px; font-weight:600; transform:rotate(-3deg);
+    border:1px solid currentColor;
+  }
+  .sev.urgente{color:var(--danger);}
+  .sev.orientar{color:var(--gold-deep);}
+  .sev.aguardar{color:var(--blue-deep);}
+  .sev.rotina{color:var(--teal);}
+
+  .card h3{font-family:'Sora', sans-serif; font-size:17px; font-weight:600; margin-bottom:12px; line-height:1.3;}
+  .field{margin-bottom:9px;}
+  .field .k{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:1px;
+    color:var(--text-faint); margin-bottom:2px;
+  }
+  .field .v{font-size:13.5px; color:var(--text);}
+  .field .v ul{padding-left:18px; margin-top:2px;}
+  .field .v li{margin-bottom:2px;}
+  .field.sol .v{color:var(--text);}
+  .field.sol{
+    margin-top:12px; padding-top:12px; border-top:1px solid var(--border);
+  }
+  .link-ref{
+    display:inline-block; margin-top:10px; font-size:12px; color:var(--teal);
+    text-decoration:none; border-bottom:1px dotted var(--teal);
+  }
+
+  /* ---------- UF TABLE ---------- */
+  .uf-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:8px; box-shadow:var(--shadow);}
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  thead th{
+    text-align:left; padding:12px 16px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-faint);
+    background:var(--bg-panel); border-bottom:1px solid var(--border-strong);
+  }
+  tbody td{padding:12px 16px; border-bottom:1px solid var(--border); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--bg-panel-alt);}
+  .uf-code{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight:600; color:var(--gold-deep);
+    background:var(--gold-soft); padding:3px 8px; border-radius:4px; font-size:12.5px;
+  }
+
+  /* ---------- FLOW ---------- */
+  .flow{display:flex; flex-direction:column; gap:0;}
+  .flow-step{
+    display:grid; grid-template-columns:44px 1fr; gap:16px;
+    padding:18px 0; border-bottom:1px dashed var(--border-strong);
+  }
+  .flow-step:last-child{border-bottom:none;}
+  .flow-num{
+    width:44px; height:44px; border-radius:50%; border:1.5px solid var(--gold-deep); color:var(--gold-deep);
+    display:flex; align-items:center; justify-content:center; font-family:'Sora', sans-serif; font-weight:600;
+    font-size:16px;
+  }
+  .flow-q{font-family:'Sora', sans-serif; font-weight:600; font-size:16px; margin-bottom:10px;}
+  .branches{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:10px;}
+  .branch{
+    background:var(--bg-panel); border:1px solid var(--border); border-radius:6px; padding:12px 14px;
+  }
+  .branch .tag{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:10.5px; font-weight:600; letter-spacing:1px;
+    padding:2px 7px; border-radius:3px; display:inline-block; margin-bottom:6px;
+  }
+  .branch.sim .tag{background:var(--teal-soft); color:var(--teal);}
+  .branch.nao .tag{background:var(--danger-soft); color:var(--danger);}
+  .branch p{font-size:13.5px; color:var(--text-muted);}
+
+  /* ---------- XML STEPS ---------- */
+  .steps{counter-reset:step;}
+  .step{
+    display:grid; grid-template-columns:32px 1fr; gap:14px; padding:14px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .step:last-child{border-bottom:none;}
+  .step::before{
+    counter-increment:step; content:counter(step);
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight:600; font-size:13px;
+    width:32px; height:32px; border-radius:6px; background:var(--gold-soft); color:var(--gold-deep);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .step p{font-size:14px;}
+  .step code{
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:var(--bg-panel); padding:1px 6px; border-radius:4px; font-size:12.5px; color:var(--gold-deep);
+  }
+  .note-box{
+    margin-top:18px; padding:14px 16px; border-left:3px solid var(--danger);
+    background:var(--danger-soft); border-radius:0 6px 6px 0; font-size:13.5px;
+  }
+  .note-box b{color:var(--danger);}
+
+  section.pad-section{
+    margin-top:56px; padding-top:6px;
+  }
+  section.pad-section h2{font-family:'Sora', sans-serif; font-size:24px; font-weight:600; margin-bottom:6px;}
+  section.pad-section .cat-intro{margin-bottom:24px;}
+
+  footer{
+    max-width:1100px; margin:70px auto 0; padding:24px 32px 0;
+    border-top:1px solid var(--border); color:var(--text-faint); font-size:12px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+  .hidden{display:none !important;}
+
+  @media (max-width:640px){
+    .hero{padding:28px 20px 20px;}
+    .toolbar{padding:12px 20px;}
+    main{padding:0 20px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .card, .chip{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="brand">
+    <svg viewBox="0 0 548 259" xmlns="http://www.w3.org/2000/svg" aria-label="olist">
+      <path d="M543.62 141.96H508.82L508.69 190.64C508.69 214.05 528.66 218.81 543.81 219.44C545.8 219.52 547.35 221.18 547.35 223.17V254.7C547.35 256.82 545.61 258.49 543.49 258.44C517.26 257.81 495.42 250.72 482.4 237.34C464.17 218.61 464.59 197.21 464.73 195.33L465.12 60.77C465.12 58.71 466.8 57.05 468.85 57.05H505.38C507.45 57.05 509.13 58.74 509.11 60.81L508.8 105.05H543.6C545.66 105.05 547.33 106.72 547.33 108.79V138.23C547.33 140.29 545.66 141.96 543.6 141.96" fill="#0A4EE4"/>
+      <path d="M223.66 248.88L223.76 37.2C223.76 35.14 222.09 33.46 220.03 33.46H183.43C181.37 33.46 179.7 35.13 179.7 37.19V248.87C179.7 250.93 181.37 252.6 183.43 252.6H219.93C221.99 252.6 223.66 250.93 223.66 248.87" fill="#0A4EE4"/>
+      <path d="M419.09 166.17C407.89 161.96 393.03 158.78 379.89 156.63C373.39 155.48 368.19 153.81 364.45 151.65C358.04 148.38 357.95 138.25 364.27 134.57C371.45 129.7 388.97 130.15 396.38 135.62C399.22 137.3 401.49 140.38 403.12 144.06C403.67 145.3 405.04 145.94 406.33 145.55L439.3 135.51C441.5 134.84 442.55 132.37 441.56 130.29C437.41 121.5 430.95 114.03 422.13 108.13C400.6 92.6 356.19 92.82 335.58 108.93C317.12 120.84 312.52 153.44 326.79 170.25C338.86 184.65 358.33 189.81 377.2 193.79C377.26 193.8 377.32 193.81 377.39 193.83C385.6 195.11 399.63 197.87 404.06 201.15C411.07 205.33 410.34 215.03 403.61 219.54C399.84 222.33 393.74 223.74 385.49 223.74C369.54 223.72 358.88 217.92 354.07 204.51C353.62 203.25 352.19 202.49 350.9 202.82L317.68 211.42C315.63 211.95 314.41 214.09 315.03 216.12C318.76 228.22 325.98 238.25 336.55 245.31C372.07 269.16 451.28 263.04 450.12 207.15C450.12 196.25 447.26 187.42 441.61 180.92C436.08 174.56 428.5 169.6 419.08 166.18" fill="#0A4EE4"/>
+      <path d="M250.06 102.86V248.88C250.06 250.94 251.73 252.61 253.79 252.61H290.93C292.99 252.61 294.66 250.94 294.66 248.88V102.86C294.66 100.8 292.99 99.13 290.93 99.13H253.79C251.73 99.13 250.06 100.8 250.06 102.86Z" fill="#0A4EE4"/>
+      <path d="M272.36 48.59C258.94 48.59 248.07 37.71 248.07 24.3V49.95C248.07 63.37 258.95 74.24 272.36 74.24C285.77 74.24 296.65 63.36 296.65 49.95V24.3C296.65 37.72 285.77 48.59 272.36 48.59Z" fill="#E64E36"/>
+      <path d="M272.36 48.59C285.78 48.59 296.65 37.71 296.65 24.3C296.65 10.89 285.78 0 272.36 0C258.94 0 248.07 10.88 248.07 24.29C248.07 37.71 258.95 48.58 272.36 48.58" fill="#0A4EE4"/>
+      <path d="M81.07 217.29C57.97 217.29 41.2 200.41 41.2 177.14C41.2 154.38 57.97 137.86 81.07 137.86C104.17 137.86 120.63 154.38 120.63 177.14C120.63 199.9 103.99 217.29 81.07 217.29ZM80.91 96.66C36.23 96.66 0 132.89 0 177.57C0 222.25 36.23 258.48 80.91 258.48C125.59 258.48 161.82 222.25 161.82 177.57C161.82 132.89 125.59 96.65 80.91 96.65" fill="#0A4EE4"/>
+    </svg>
+  </div>
+  <h1>Central de <span class="accent">Diagnóstico</span> GNRE</h1>
+  <p class="lede">Guia de referência rápida para atendimento: sintomas, causas e tratativas para os problemas mais comuns no pagamento e emissão de guias GNRE pela Conta Digital.</p>
+</header>
+
+<nav class="toolbar">
+  <div class="toolbar-inner">
+    <input id="search" type="text" placeholder="Buscar por sintoma, causa ou palavra‑chave… (ex: EMV, saldo, Acre)">
+    <div class="chips" id="chips">
+      <button class="chip active" data-cat="all">Todos</button>
+      <button class="chip" data-cat="A">Cobrança</button>
+      <button class="chip" data-cat="B">UF Acre</button>
+      <button class="chip" data-cat="C">Instabilidade</button>
+      <button class="chip" data-cat="D">Pagamento</button>
+      <button class="chip" data-cat="E">Guia</button>
+    </div>
+  </div>
+</nav>
+<div id="resultCount"></div>
+
+<main>
+
+  <!-- CATEGORY A -->
+  <section class="category-block cat-A" data-cat="A">
+    <div class="cat-head"><span class="cat-tag">A · Cobrança</span><h2>Cobrança e tarifas</h2></div>
+    <p class="cat-intro">Dúvidas sobre a tarifa cobrada pela automação do pagamento de GNRE via Conta Digital.</p>
+    <div class="cards">
+      <article class="card" data-cat="A" data-code="GNRE-01">
+        <div class="card-top"><span class="sev orientar">Orientar</span></div>
+        <h3>Cobrança da tarifa de automação GNRE</h3>
+        <div class="field"><div class="k">Quando ocorre</div><div class="v">Cliente recebe uma cobrança pelo uso da funcionalidade de pagamento de GNRE na Conta Digital e quer entender o motivo.</div></div>
+        <div class="field"><div class="k">O que está incluso</div><div class="v"><ul><li>Cálculo da guia</li><li>Emissão</li><li>Pagamento direto pelo ERP</li><li>Integração automática com a Conta Digital</li></ul></div></div>
+        <div class="field sol"><div class="k">Como explicar</div><div class="v">Sem a funcionalidade, todo o processo seria manual no portal da SEFAZ. A tarifa soma percentual sobre a operação + valor fixo por guia, descontada a franquia mensal do plano, com teto de <strong>R$ 499,00/mês</strong>. O valor é sempre exibido antes da confirmação do pagamento.</div></div>
+        <a class="link-ref" href="https://ajuda.olist.com/guias-de-pagamento-de-impostos/atualizacao-nas-taxas-para-pagamento-de-guias-gnre-ipva-e-darf" target="_blank" rel="noopener">Artigo de referência ↗</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- CATEGORY B -->
+  <section class="category-block cat-B" data-cat="B">
+    <div class="cat-head"><span class="cat-tag">B · UF Acre</span><h2>Particularidade do Acre (AC)</h2></div>
+    <p class="cat-intro">Estado com regra própria de pagamento — vale conferir sempre que a UF do cliente for AC.</p>
+    <div class="cards">
+      <article class="card" data-cat="B" data-code="GNRE-02">
+        <div class="card-top"><span class="sev urgente">Urgente</span></div>
+        <h3>Status "Informações Incompletas" no Acre</h3>
+        <div class="field"><div class="k">Causa</div><div class="v">O convênio de pagamento via código de barras foi encerrado no AC. O pagamento passou a ser aceito <strong>somente via Pix (QR Code)</strong>.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v"><ul><li>Para guias existentes: usar QR Code ou Pix Copia e Cola</li><li>Para evitar recorrência: <span class="mono">Configurações → Notas Fiscais → Configuração GNRE → Forma de pagamento → PIX</span></li></ul></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CATEGORY C -->
+  <section class="category-block cat-C" data-cat="C">
+    <div class="cat-head"><span class="cat-tag">C · Instabilidade</span><h2>Instabilidade de sistema e integrações</h2></div>
+    <p class="cat-intro">Oscilações da API oficial da GNRE, da SEFAZ estadual ou da comunicação com a Conta Digital — não são falhas exclusivas da Olist.</p>
+    <div class="cards">
+      <article class="card" data-cat="C" data-code="GNRE-03">
+        <div class="card-top"><span class="sev aguardar">Aguardar</span></div>
+        <h3>Instabilidade da API GNRE</h3>
+        <div class="field"><div class="k">Sintomas</div><div class="v"><ul><li>Guia não localizada</li><li>Erro ao consultar lote</li><li>Falha ao exportar</li><li>Consulta lenta ou vazia</li></ul></div></div>
+        <div class="field"><div class="k">Limitação importante</div><div class="v">A API oficial só consulta cerca dos <strong>últimos 180 dias</strong>. Guias mais antigas precisam ser consultadas direto no Portal GNRE.</div></div>
+        <div class="field sol"><div class="k">Orientação</div><div class="v">Usar Consultar Lote, consultar no Portal GNRE, ou aguardar estabilização.</div></div>
+      </article>
+      <article class="card" data-cat="C" data-code="GNRE-06">
+        <div class="card-top"><span class="sev aguardar">Aguardar</span></div>
+        <h3>Instabilidade entre Conta Digital e SEFAZ</h3>
+        <div class="field"><div class="k">Sintomas</div><div class="v">Erro interno, "não foi possível concluir pagamento", erro inesperado, falha na comunicação.</div></div>
+        <div class="field sol"><div class="k">Orientação</div><div class="v">Enquanto durar: pagar por outra instituição financeira para evitar atraso, e aguardar normalização da integração.</div></div>
+      </article>
+      <article class="card" data-cat="C" data-code="GNRE-11">
+        <div class="card-top"><span class="sev aguardar">Aguardar</span></div>
+        <h3>Instabilidade da SEFAZ estadual</h3>
+        <div class="field"><div class="k">Sintoma</div><div class="v">Erro restrito a uma UF específica (ex: SP, MG, RJ, BA).</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Portal estadual indisponível — aguardar retorno da SEFAZ daquele estado.</div></div>
+      </article>
+      <article class="card" data-cat="C" data-code="GNRE-16">
+        <div class="card-top"><span class="sev aguardar">Aguardar</span></div>
+        <h3>Timeout da API</h3>
+        <div class="field"><div class="k">Sintoma</div><div class="v">Tela fica carregando e retorna erro por tempo excedido na comunicação.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Aguardar alguns minutos e tentar novamente.</div></div>
+      </article>
+      <article class="card" data-cat="C" data-code="GNRE-17">
+        <div class="card-top"><span class="sev aguardar">Aguardar</span></div>
+        <h3>Erro interno da API</h3>
+        <div class="field"><div class="k">Sintoma</div><div class="v">Mensagem: "Ocorreu um erro interno na API" — falha temporária do serviço de integração.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Nova tentativa mais tarde. Se persistir, abrir chamado técnico.</div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CATEGORY D -->
+  <section class="category-block cat-D" data-cat="D">
+    <div class="cat-head"><span class="cat-tag">D · Pagamento</span><h2>Erros de pagamento (Pix, QR Code, EMV, saldo)</h2></div>
+    <p class="cat-intro">Falhas no momento do pagamento propriamente dito, geralmente ligadas ao QR Code/Pix ou ao saldo da Conta Digital.</p>
+    <div class="cards">
+      <article class="card" data-cat="D" data-code="GNRE-04">
+        <div class="card-top"><span class="sev orientar">Orientar</span></div>
+        <h3>"Não foram encontradas informações para o EMV informado"</h3>
+        <div class="field"><div class="k">O que é EMV</div><div class="v">É o conteúdo do QR Code Pix (payload Pix) — é por ele que a Conta Digital consulta os dados do pagamento.</div></div>
+        <div class="field"><div class="k">Possíveis causas</div><div class="v"><ul><li>QR Code ou Pix expirado</li><li>Guia alterada</li><li>Falha SEFAZ ↔ Conta Digital</li><li>Guia com informações incompletas</li></ul></div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Gerar nova guia e novo QR Code. Se persistir: tentar outro banco ou abrir investigação técnica.</div></div>
+      </article>
+      <article class="card" data-cat="D" data-code="GNRE-05">
+        <div class="card-top"><span class="sev orientar">Orientar</span></div>
+        <h3>"Error fetching account from dict"</h3>
+        <div class="field"><div class="k">Significado</div><div class="v">A Conta Digital não localizou as informações da chave Pix do recebedor.</div></div>
+        <div class="field"><div class="k">Possíveis causas</div><div class="v"><ul><li>Chave Pix indisponível</li><li>QR Code inválido ou expirado</li><li>Instabilidade Conta Digital ↔ SEFAZ</li></ul></div></div>
+        <div class="field sol"><div class="k">Orientação</div><div class="v">Gerar novo QR Code / Copia e Cola, atualizar a página, tentar novamente. Persistindo, orientar pagamento em outro banco.</div></div>
+      </article>
+      <article class="card" data-cat="D" data-code="GNRE-08">
+        <div class="card-top"><span class="sev rotina">Rotina</span></div>
+        <h3>QR Code expirado</h3>
+        <div class="field"><div class="k">Causa</div><div class="v">O QR Code tem validade definida pela SEFAZ; após esse período deixa de retornar dados e o EMV fica inválido.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Gerar novo QR Code.</div></div>
+      </article>
+      <article class="card" data-cat="D" data-code="GNRE-09">
+        <div class="card-top"><span class="sev rotina">Rotina</span></div>
+        <h3>Saldo insuficiente</h3>
+        <div class="field"><div class="k">Causa</div><div class="v">Saldo da Conta Digital insuficiente para concluir o pagamento.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Adicionar saldo e realizar novo pagamento.</div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CATEGORY E -->
+  <section class="category-block cat-E" data-cat="E">
+    <div class="cat-head"><span class="cat-tag">E · Guia</span><h2>Status e emissão da guia</h2></div>
+    <p class="cat-intro">Problemas ligados ao ciclo de vida da guia — emissão, vencimento, consulta de lote e dados incompletos.</p>
+    <div class="cards">
+      <article class="card" data-cat="E" data-code="GNRE-07">
+        <div class="card-top"><span class="sev rotina">Rotina</span></div>
+        <h3>Guia vencida</h3>
+        <div class="field"><div class="k">Possíveis mensagens</div><div class="v">Guia vencida, documento expirado, código inválido.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Emitir nova guia.</div></div>
+      </article>
+      <article class="card" data-cat="E" data-code="GNRE-10">
+        <div class="card-top"><span class="sev orientar">Orientar</span></div>
+        <h3>Convênio indisponível</h3>
+        <div class="field"><div class="k">Causa</div><div class="v">A UF alterou ou desativou temporariamente determinado convênio.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Emitir diretamente pelo portal estadual.</div></div>
+      </article>
+      <article class="card" data-cat="E" data-code="GNRE-12">
+        <div class="card-top"><span class="sev aguardar">Aguardar</span></div>
+        <h3>Erro ao consultar lote</h3>
+        <div class="field"><div class="k">Causa</div><div class="v">Número incorreto, lote ainda em processamento ou API indisponível.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Aguardar processamento e consultar novamente.</div></div>
+      </article>
+      <article class="card" data-cat="E" data-code="GNRE-13">
+        <div class="card-top"><span class="sev rotina">Rotina</span></div>
+        <h3>Guia já paga</h3>
+        <div class="field"><div class="k">Causa</div><div class="v">A guia já foi quitada anteriormente.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Confirmar o pagamento diretamente no portal da SEFAZ.</div></div>
+      </article>
+      <article class="card" data-cat="E" data-code="GNRE-14">
+        <div class="card-top"><span class="sev rotina">Rotina</span></div>
+        <h3>Linha digitável inválida</h3>
+        <div class="field"><div class="k">Causa</div><div class="v">Cópia incompleta, caracteres extras ou linha digitável alterada.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Copiar novamente ou gerar nova guia.</div></div>
+      </article>
+      <article class="card" data-cat="E" data-code="GNRE-15">
+        <div class="card-top"><span class="sev rotina">Rotina</span></div>
+        <h3>QR Code não encontrado</h3>
+        <div class="field"><div class="k">Causa</div><div class="v">Problema na geração da guia.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Emitir nova guia.</div></div>
+      </article>
+      <article class="card" data-cat="E" data-code="GNRE-18">
+        <div class="card-top"><span class="sev orientar">Orientar</span></div>
+        <h3>Guia sem dados de pagamento</h3>
+        <div class="field"><div class="k">Sintoma</div><div class="v">A guia é emitida, mas não possui QR Code nem linha digitável válida.</div></div>
+        <div class="field"><div class="k">Causa</div><div class="v">Retorno incompleto da SEFAZ.</div></div>
+        <div class="field sol"><div class="k">Solução</div><div class="v">Gerar nova guia.</div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- UF TABLE -->
+  <section class="pad-section" id="ufs">
+    <h2>UFs de maior volume de chamados</h2>
+    <p class="cat-intro">Com base no histórico de atendimento, estas UFs concentram mais ocorrências — vale conhecer o padrão de cada uma.</p>
+    <div class="uf-wrap">
+      <table>
+        <thead><tr><th>UF</th><th>Problemas mais comuns</th></tr></thead>
+        <tbody>
+          <tr><td><span class="uf-code">AC</span></td><td>Apenas pagamento via Pix (QR Code)</td></tr>
+          <tr><td><span class="uf-code">RJ</span></td><td>Erros de chave Pix, "Error fetching account from dict", instabilidades na SEFAZ‑RJ</td></tr>
+          <tr><td><span class="uf-code">MG</span></td><td>Convênios GNRE, XML, preenchimento de convênio e CNPJ da SEFAZ</td></tr>
+          <tr><td><span class="uf-code">SP</span></td><td>Oscilações na emissão e consulta de guias</td></tr>
+          <tr><td><span class="uf-code">BA</span></td><td>Instabilidades temporárias na consulta da GNRE</td></tr>
+          <tr><td><span class="uf-code">GO</span></td><td>Falhas ocasionais de integração</td></tr>
+          <tr><td><span class="uf-code">MT</span></td><td>Lentidão na geração de guias</td></tr>
+          <tr><td><span class="uf-code">PR</span></td><td>Consulta de lote e retorno da API</td></tr>
+          <tr><td><span class="uf-code">RS</span></td><td>Instabilidades na emissão em períodos de alta demanda</td></tr>
+          <tr><td><span class="uf-code">PE</span></td><td>Oscilações no processamento da guia</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- DIAGNOSTIC FLOW -->
+  <section class="pad-section" id="fluxo">
+    <h2>Fluxo de diagnóstico para o atendimento</h2>
+    <p class="cat-intro">Siga esta sequência para chegar rápido à causa raiz durante o atendimento.</p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div>
+          <div class="flow-q">A guia foi emitida?</div>
+          <div class="branches">
+            <div class="branch nao"><span class="tag">NÃO</span><p>Verificar erro de emissão ou indisponibilidade da SEFAZ.</p></div>
+            <div class="branch sim"><span class="tag">SIM</span><p>Seguir para o próximo passo.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div>
+          <div class="flow-q">O pagamento foi iniciado?</div>
+          <div class="branches">
+            <div class="branch nao"><span class="tag">NÃO</span><p>Verificar saldo, cobrança da tarifa ou configuração da GNRE.</p></div>
+            <div class="branch sim"><span class="tag">SIM</span><p>Identificar a mensagem de erro apresentada.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div>
+          <div class="flow-q">Qual é o erro?</div>
+          <div class="branches">
+            <div class="branch"><span class="tag" style="background:var(--purple-soft); color:var(--purple);">EMV</span><p>Não encontrado → gerar nova guia / QR Code.</p></div>
+            <div class="branch"><span class="tag" style="background:var(--purple-soft); color:var(--purple);">Fetching</span><p>Error fetching account from dict → novo QR Code; se necessário, pagar por outro banco.</p></div>
+            <div class="branch"><span class="tag" style="background:var(--teal-soft); color:var(--teal);">API</span><p>Erro interno/API → aguardar estabilização e tentar novamente.</p></div>
+            <div class="branch"><span class="tag" style="background:var(--danger-soft); color:var(--danger);">AC</span><p>Informações incompletas → utilizar pagamento via Pix.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div>
+          <div class="flow-q">Há urgência no pagamento?</div>
+          <div class="branches">
+            <div class="branch sim"><span class="tag">SIM</span><p>Orientar pagamento por outra instituição financeira, evitando juros e multas.</p></div>
+            <div class="branch nao"><span class="tag">NÃO</span><p>Aguardar a normalização da integração e acompanhar o caso.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- XML CONVÊNIO -->
+  <section class="pad-section" id="xml">
+    <h2>Preenchimento do número do convênio no XML</h2>
+    <p class="cat-intro">Configuração importante para evitar problemas de validação das GNREs — principalmente para <span class="uf-code">RN</span> e <span class="uf-code">MT</span>. O cliente deve consultar a própria contabilidade para saber o número correto do convênio de cada estado.</p>
+    <div class="steps">
+      <div class="step"><p>Acesse <code>Menu → Configurações</code>.</p></div>
+      <div class="step"><p>Vá até a aba <code>Vendas</code> e clique em <strong>Partilha de ICMS em operações interestaduais (EC 87/2015)</strong>.</p></div>
+      <div class="step"><p>Habilite <strong>"Possui partilha ICMS em operações interestaduais (EC 87/2015)"</strong>.</p></div>
+      <div class="step"><p>Em <strong>"Alíquotas por estado"</strong>, localize o estado desejado.</p></div>
+      <div class="step"><p>Clique em <strong>"Editar"</strong> na coluna <strong>"Exceções"</strong>.</p></div>
+      <div class="step"><p>No campo <strong>"Convênio"</strong>, insira a numeração desejada e salve.</p></div>
+    </div>
+    <div class="note-box"><b>Atenção:</b> se o campo for deixado em branco, o XML da GNRE será gerado sem a tag de convênio — sem travas ou validações pelo sistema.</div>
+  </section>
+
+</main>
+
+<footer>
+  <span>Central de Diagnóstico GNRE · Material interno de treinamento</span>
+  <span class="mono">Última atualização · Ago/2026</span>
+</footer>
+
+<script>
+  const search = document.getElementById('search');
+  const chips = document.querySelectorAll('.chip');
+  const catBlocks = document.querySelectorAll('.category-block');
+  const resultCount = document.getElementById('resultCount');
+  let activeCat = 'all';
+
+  function applyFilters(){
+    const q = search.value.trim().toLowerCase();
+    let visibleTotal = 0;
+
+    catBlocks.forEach(block=>{
+      const blockCat = block.dataset.cat;
+      const catMatches = activeCat === 'all' || activeCat === blockCat;
+      let visibleInBlock = 0;
+
+      block.querySelectorAll('.card').forEach(card=>{
+        const text = card.textContent.toLowerCase();
+        const textMatch = q === '' || text.includes(q);
+        const show = catMatches && textMatch;
+        card.classList.toggle('hidden', !show);
+        if(show){ visibleInBlock++; visibleTotal++; }
+      });
+
+      block.classList.toggle('hidden', visibleInBlock === 0);
+    });
+
+    resultCount.textContent = q || activeCat !== 'all'
+      ? visibleTotal + ' resultado(s) encontrado(s)'
+      : '';
+  }
+
+  search.addEventListener('input', applyFilters);
+  chips.forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      chips.forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      activeCat = chip.dataset.cat;
+      applyFilters();
+    });
+  });
+</script>
+
+</body>
+</html>
