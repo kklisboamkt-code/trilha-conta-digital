@@ -672,26 +672,26 @@ const MODULES = [
         title:"Aula 2.1 — Criando Pedido e Emitindo Cobrança via Pedido de Venda",
         theory:"Passo a passo completo para criar o Pedido de Venda diretamente no menu de Vendas, salvar o registro, acessar 'Mais ações' e acionar a emissão da cobrança.",
         intro:"Observe no vídeo como o operador insere o cliente, adiciona os produtos, escolhe a forma de pagamento e finaliza acionando a opção 'Emitir cobrança' no menu superior.",
-        video:"01.mp4"
+        video:"https://www.youtube.com/embed/fHrX3_YRalE"
       },
       {
         title:"Aula 2.2 — Cobrança via PDV sem Vínculo de Cliente (cenário que NÃO concilia)",
         theory:"Demonstração do fluxo rápido de venda pelo PDV mantendo o cadastro genérico de 'Consumidor Final'.",
         intro:"Atenção especial ao cliente selecionado durante o vídeo: veja o que acontece quando a venda é concluída sem a identificação do comprador.",
-        video:"02.mp4",
+        video:"https://www.youtube.com/embed/cjyW6Ba00rI",
         alert:"Atenção: esse fluxo gera a cobrança normalmente, porém não realiza a conciliação automática no sistema."
       },
       {
         title:"Aula 2.3 — Cobrança Automática via PDV com Cliente Selecionado",
         theory:"Apresentação da boa prática operacional no PDV: alterar o cliente padrão antes da geração do pagamento para garantir a baixa e conciliação automática.",
         intro:"Repare como a simples busca e seleção do cliente cadastrado altera todo o fluxo de inteligência financeira do pedido.",
-        video:"03.mp4"
+        video:"https://www.youtube.com/embed/mQARPmcJ69k"
       },
       {
         title:"Aula 2.4 — Cobrança a partir do Contas a Receber",
         theory:"Procedimento para lançar e cobrar um título financeiro diretamente no módulo de Contas a Receber usando a Conta Digital como Gateway.",
         intro:"Acompanhe o caminho pelo menu Finanças > Contas a Receber, o preenchimento dos dados do título e a chamada da Maquininha no Celular.",
-        video:"04.mp4"
+        video:"https://www.youtube.com/embed/3jwL4MM_WpI"
       }
     ],
     part3:{
@@ -1396,11 +1396,8 @@ function renderTrilhaTab(mod){
           </div>
 
           <!-- Player de Vídeo -->
-          <div style="border-radius:12px; overflow:hidden; background:#000; margin-bottom:12px;">
-            <video width="100%" controls style="display:block;">
-              <source src="${item.video}" type="video/mp4">
-              Seu navegador não suporta a exibição de vídeos.
-            </video>
+          <div style="border-radius:12px; overflow:hidden; background:#000; margin-bottom:12px; position:relative; padding-top:56.25%;">
+            <iframe src="${item.video}" title="${esc(item.title)}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0; display:block;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
           </div>
 
           <!-- Alerta visual de observação pedagógica -->
