@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trilha de Conhecimento — Olist Conta Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#071A3D;--ink-2:#15316B;--blue:#0A4EE4;--blue-deep:#0A3FB0;--blue-soft:#E4EBFC;
+  --gold:#F2B33D;--gold-deep:#d99613;--gold-soft:#FCEFD2;
+  --bg:#EEF2FB;--surface:#FFFFFF;--muted:#5C6B8A;--line:#DCE3F5;--line-soft:#EEF2FB;
+  --danger:#E64E36;--danger-soft:#FCE7E2;
+  --btn-primary:#071A3D;--btn-primary-hover:#0A2D63;
+  --display:'Sora',system-ui,-apple-system,sans-serif;--body:'Inter',system-ui,-apple-system,sans-serif;
+  --shadow:0 1px 2px rgba(11,36,51,.04),0 12px 30px -18px rgba(11,36,51,.25);
+  --radius:16px;--radius-sm:11px;--sidebar-w:272px;
+  --transition:.2s ease;
+}
+[data-theme="dark"]{
+  --ink:#EAF0FF;--ink-2:#C9D8FA;--blue:#4C7DFF;--blue-deep:#7FA0FF;--blue-soft:#132753;
+  --gold:#F2B33D;--gold-deep:#e0a838;--gold-soft:#3a2f14;
+  --bg:#0A1730;--surface:#101F42;--muted:#93A3CC;--line:#233766;--line-soft:#17264D;
+  --danger:#FF7A5C;--danger-soft:#3a1c14;
+  --btn-primary:#0A4EE4;--btn-primary-hover:#3B72F0;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 32px -18px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;transition:background var(--transition),color var(--transition)}
+h1,h2,h3,h4{font-family:var(--display);letter-spacing:-.01em;margin:0}
+a{color:var(--blue-deep)}
+button{font-family:var(--body)}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+
+/* ===== layout shell ===== */
+#shell{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);flex:none;background:var(--surface);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto;transition:margin var(--transition),width var(--transition)}
+.sidebar.collapsed{margin-left:calc(-1 * var(--sidebar-w))}
+.brand{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:6px 8px 18px;border-bottom:1px solid var(--line-soft);margin-bottom:14px}
+.brand-logo{width:64px;flex:none}
+.brand-logo svg{width:100%;height:auto;display:block}
+.brand-title h1{font-size:15px;font-weight:700;line-height:1.25}
+.brand-title p{margin:2px 0 0;font-size:11.5px;color:var(--muted)}
+
+.nav-section-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:14px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--transition);color:var(--ink-2);margin-bottom:2px}
+.nav-item:hover{background:var(--line-soft)}
+.nav-item.active{background:var(--blue-soft);color:var(--blue-deep);font-weight:600}
+.nav-item .num{width:24px;height:24px;border-radius:8px;background:var(--line-soft);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:10.5px;flex:none;color:var(--muted)}
+.nav-item.active .num{background:var(--blue);color:#fff}
+.nav-item.done .num{background:var(--blue);color:#fff}
+.nav-item .lbl{flex:1;font-size:13.3px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-item .chk{width:14px;height:14px;flex:none;color:var(--blue-deep);opacity:0}
+.nav-item.done .chk{opacity:1}
+.sidebar-foot{margin-top:auto;padding:14px 10px 4px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6}
+.sidebar-foot a{color:var(--blue-deep);text-decoration:none}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:14px;padding:14px 26px;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:40}
+.icon-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);width:36px;height:36px;border-radius:10px;display:grid;place-items:center;cursor:pointer;flex:none;transition:var(--transition)}
+.icon-btn:hover{border-color:var(--blue);color:var(--blue-deep)}
+.icon-btn svg{width:17px;height:17px}
+.breadcrumb{font-size:13px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.breadcrumb b{color:var(--ink);font-weight:600}
+.breadcrumb span.sep{margin:0 6px;color:var(--line)}
+.user-chip{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border-radius:99px;background:var(--blue-soft);flex:none;white-space:nowrap}
+.user-chip .av{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--display);font-weight:700;font-size:11.5px;display:grid;place-items:center;flex:none}
+.user-chip .nm{font-size:12.8px;font-weight:600;color:var(--blue-deep)}
+.top-actions{display:flex;gap:8px;align-items:center}
+.saved-pill{font-size:11.5px;color:var(--blue-deep);opacity:0;transition:opacity .3s;font-weight:600;white-space:nowrap}
+.saved-pill.show{opacity:1}
+
+.content{padding:26px 30px 70px;max-width:980px;width:100%;margin:0 auto}
+.content.wide{max-width:1120px}
+
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);padding:9px 14px;border-radius:11px;cursor:pointer;font-weight:500;font-size:13.5px;transition:var(--transition)}
+.btn:hover{border-color:var(--blue);color:var(--blue-deep)}
+.btn.primary{background:var(--btn-primary);color:#fff;border-color:var(--btn-primary)}
+.btn.primary:hover{background:var(--btn-primary-hover);border-color:var(--btn-primary-hover)}
+.btn.gold{background:var(--gold);color:#432c00;border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-deep)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn svg{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+
+/* ===== setup / primeiro acesso ===== */
+.setup-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+.setup-overlay.hide{display:none}
+.setup{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:44px 36px;text-align:center;max-width:440px;width:100%;margin:0 auto}
+.setup .setup-logo{width:84px;margin:0 auto 20px}
+.setup .setup-logo svg{width:100%;height:auto;display:block}
+.setup .setup-eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-deep);margin-bottom:8px}
+.setup .ico{width:58px;height:58px;border-radius:16px;background:var(--blue-soft);display:grid;place-items:center;margin:0 auto 18px;color:var(--blue-deep)}
+.setup h2{font-size:22px;margin:0 0 8px}
+.setup p{color:var(--muted);margin:0 auto 22px;max-width:360px;font-size:13.8px}
+.setup .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.setup input[type=text]{min-width:260px}
+.setup small{display:block;margin-top:14px;color:var(--muted);font-size:11.5px}
+input[type=text]{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:11px;padding:11px 14px;font-family:var(--body);font-size:15px;min-width:230px}
+input[type=text]:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+
+/* ===== dashboard hero ===== */
+.hero{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px;display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;margin-bottom:22px}
+.gauge{position:relative;width:190px;height:190px;flex:none}
+.gauge svg{transform:rotate(-90deg)}
+.gauge .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.gauge .pct{font-family:var(--display);font-size:42px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.gauge .pct span{font-size:18px;color:var(--muted);font-weight:600}
+.gauge .lvl{margin-top:6px;font-size:11.5px;font-weight:700;color:var(--blue-deep);text-transform:uppercase;letter-spacing:.05em}
+.hero-info .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hero-info h2{font-size:24px;font-weight:600;margin:5px 0 3px}
+.hero-info .who{color:var(--blue-deep)}
+.hero-info .meta{color:var(--muted);font-size:13px;margin-bottom:16px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px}
+.stat-box{background:var(--bg);border-radius:12px;padding:12px 14px}
+.stat-box .n{font-family:var(--display);font-size:19px;font-weight:700}
+.stat-box .l{font-size:11.5px;color:var(--muted);margin-top:2px}
+@media(max-width:860px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin:28px 2px 12px;flex-wrap:wrap;gap:8px}
+.section-head h3{font-size:13.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+.section-head .hint{font-size:12px;color:var(--muted)}
+
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.mod-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 18px 16px;cursor:pointer;border:1px solid transparent;transition:var(--transition);display:flex;flex-direction:column;gap:10px}
+.mod-card:hover{border-color:var(--blue)}
+.mod-card.complete{border-color:var(--blue)}
+.mc-top{display:flex;align-items:center;gap:12px}
+.mc-code{font-family:var(--display);font-weight:700;font-size:12.5px;color:var(--blue-deep);background:var(--blue-soft);border-radius:9px;padding:6px 9px;flex:none;min-width:40px;text-align:center}
+.mc-title{font-weight:600;font-size:15px;flex:1}
+.mc-level{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--gold-soft);color:#9a6a06;flex:none}
+.mc-desc{font-size:12.8px;color:var(--muted);flex:1}
+.mc-bar{height:6px;border-radius:99px;background:var(--line-soft);overflow:hidden}
+.mc-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-deep));border-radius:99px}
+.mc-foot{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted)}
+.mc-foot .done-badge{color:var(--blue-deep);font-weight:700;display:flex;align-items:center;gap:4px}
+
+/* ===== module detail ===== */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.tab{padding:10px 4px;margin-right:20px;font-size:13.8px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:var(--transition)}
+.tab.active{color:var(--ink);border-color:var(--blue)}
+.mod-head-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 26px;margin-bottom:20px}
+.mod-head-card .tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--line-soft);color:var(--muted)}
+.pill.blue{background:var(--blue-soft);color:var(--blue-deep)}
+.pill.gold{background:var(--gold-soft);color:#9a6a06}
+.mod-head-card h2{font-size:23px;margin-bottom:6px}
+.mod-head-card .desc{color:var(--muted);font-size:14px}
+.objectives{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.objectives span{background:var(--bg);border-radius:99px;padding:6px 11px;font-size:12.5px;color:var(--ink-2)}
+
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;margin-bottom:16px}
+.card h4{font-size:14px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h4 svg{width:16px;height:16px;color:var(--blue-deep)}
+.card p{margin:0 0 10px;color:var(--ink-2)}
+.card ul{margin:0;padding-left:20px;color:var(--ink-2)}
+.card ul li{margin-bottom:7px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.two-col{grid-template-columns:1fr}.hero{grid-template-columns:1fr;text-align:center;justify-items:center}}
+.flow-list{list-style:none;margin:0;padding:0;counter-reset:flow}
+.flow-list li{counter-increment:flow;padding:9px 0 9px 34px;position:relative;border-bottom:1px solid var(--line-soft)}
+.flow-list li:last-child{border-bottom:none}
+.flow-list li::before{content:counter(flow);position:absolute;left:0;top:8px;width:22px;height:22px;border-radius:7px;background:var(--blue-soft);color:var(--blue-deep);font-family:var(--display);font-weight:700;font-size:11.5px;display:grid;place-items:center}
+.use-card{border-left:3px solid var(--blue)}
+.notuse-card{border-left:3px solid var(--danger)}
+.err-item{background:var(--danger-soft);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13.5px;color:var(--ink-2)}
+.tip-item{background:var(--blue-soft);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13.5px;color:var(--ink-2)}
+.example-item{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:8px;font-size:13.5px}
+.example-item b{color:var(--blue-deep)}
+.faq-item{border-bottom:1px solid var(--line-soft);padding:12px 0}
+.faq-item:last-child{border:none}
+.faq-item summary{cursor:pointer;font-weight:600;font-size:13.8px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:'+';font-size:18px;color:var(--muted);font-weight:400}
+.faq-item[open] summary::after{content:'–'}
+.faq-item p{margin:8px 0 0;color:var(--muted);font-size:13.5px}
+
+.article-item{display:flex;align-items:flex-start;gap:12px;padding:10px 8px;border-radius:11px;transition:background .15s}
+.article-item:hover{background:var(--line-soft)}
+.check{width:21px;height:21px;border-radius:7px;border:2px solid var(--line);flex:none;margin-top:1px;cursor:pointer;display:grid;place-items:center;transition:.15s;background:var(--surface)}
+.check svg{width:12px;height:12px;opacity:0;transform:scale(.6);transition:.15s;color:#fff}
+.article-item.done .check{background:var(--blue);border-color:var(--blue)}
+.article-item.done .check svg{opacity:1;transform:scale(1)}
+.article-main{flex:1;min-width:0}
+.article-main .lab{font-size:13.8px;font-weight:500}
+.article-item.done .article-main .lab{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.article-main a{font-size:12px;color:var(--blue-deep);text-decoration:none;font-weight:500;display:inline-flex;align-items:center;gap:3px;margin-top:2px}
+.article-main a:hover{text-decoration:underline}
+
+/* ===== trilha de conteúdo (artigos) ===== */
+.trail-intro p{font-size:13px}
+.trail-progress{margin-top:14px}
+.trail-progress-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.trail-progress-count{font-size:12.8px;font-weight:600;color:var(--ink-2)}
+.trail-progress-pct{font-family:var(--display);font-size:13.5px;font-weight:700;color:var(--blue-deep)}
+.trail-list{list-style:none;margin:0;padding:0;position:relative}
+.trail-list .trail-item{position:relative}
+.trail-list .trail-item::before{content:"";position:absolute;left:18px;top:32px;bottom:-6px;width:2px;background:var(--line)}
+.trail-list .trail-item:last-child::before{display:none}
+.trail-list .trail-item.done::before{background:var(--blue)}
+.trail-done-note{background:var(--blue-soft);color:var(--ink-2);font-size:13.5px;border-radius:var(--radius);font-weight:500}
+.checklist-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0}
+.checklist-item input{margin-top:3px;accent-color:var(--blue)}
+
+/* ===== quiz ===== */
+.quiz-progress{display:flex;gap:5px;margin-bottom:18px}
+.quiz-progress i{flex:1;height:5px;border-radius:99px;background:var(--line-soft)}
+.quiz-progress i.done{background:var(--blue)}
+.quiz-progress i.current{background:var(--gold)}
+.qcard{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;margin-bottom:16px}
+.qcard .qtype{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--blue-deep);background:var(--blue-soft);display:inline-block;padding:3px 9px;border-radius:99px;margin-bottom:12px}
+.qcard .qtext{font-size:16px;font-weight:600;margin-bottom:16px;line-height:1.5}
+.opt{display:flex;align-items:center;gap:11px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:9px;cursor:pointer;transition:var(--transition);font-size:14px}
+.opt:hover{border-color:var(--blue)}
+.opt.selected{border-color:var(--blue);background:var(--blue-soft)}
+.opt.correct{border-color:var(--blue);background:var(--blue-soft)}
+.opt.wrong{border-color:var(--danger);background:var(--danger-soft)}
+.opt .radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center}
+.opt.selected .radio{border-color:var(--blue)}
+.opt.selected .radio::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--blue)}
+.opt.correct .radio::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--blue)}
+.opt.wrong .radio::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--danger)}
+.qexp{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:13.3px;display:none}
+.qexp.show{display:block}
+.qexp.ok{background:var(--blue-soft);color:var(--ink-2)}
+.qexp.bad{background:var(--danger-soft);color:var(--ink-2)}
+.quiz-nav{display:flex;justify-content:space-between;margin-top:6px}
+.quiz-result{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px;text-align:center}
+.quiz-result .score{font-family:var(--display);font-size:44px;font-weight:700;margin:8px 0}
+.quiz-result.pass .score{color:var(--blue-deep)}
+.quiz-result.fail .score{color:var(--danger)}
+.review-item{text-align:left;border-top:1px solid var(--line-soft);padding:14px 0;font-size:13.5px}
+.review-item .rq{font-weight:600;margin-bottom:6px}
+.review-item .ra{color:var(--muted)}
+.review-item .flag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px}
+.review-item .flag.ok{background:var(--blue-soft);color:var(--blue-deep)}
+.review-item .flag.bad{background:var(--danger-soft);color:var(--danger)}
+
+.mod-footer-nav{display:flex;justify-content:space-between;margin-top:24px;gap:10px}
+.back-top{position:fixed;bottom:24px;right:26px;width:44px;height:44px;border-radius:50%;background:var(--btn-primary);color:#fff;display:none;place-items:center;cursor:pointer;box-shadow:var(--shadow);z-index:50;border:none}
+.back-top:hover{background:var(--btn-primary-hover)}
+.back-top.show{display:grid}
+.back-top svg{width:18px;height:18px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(12px);background:var(--btn-primary);color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;font-weight:500;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:80}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.ready-banner{margin-top:6px;background:linear-gradient(135deg,#0A3FB0,#071A3D);color:#fff;border-radius:var(--radius);padding:22px 24px;display:none;align-items:center;gap:16px;box-shadow:var(--shadow)}
+.ready-banner.show{display:flex}
+.ready-banner .badge{width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none;color:var(--blue)}
+.ready-banner h4{margin:0 0 2px;font-size:16px}
+.ready-banner p{margin:0;font-size:12.8px;color:#b9cdd4}
+
+@media(max-width:900px){
+  .sidebar{position:fixed;z-index:100;box-shadow:var(--shadow)}
+  .sidebar.collapsed{margin-left:calc(-1 * var(--sidebar-w));box-shadow:none}
+  .content{padding:20px 16px 60px}
+  .hero{padding:22px}
+}
+@media print{
+  .sidebar,.topbar,.back-top,.toast,.tabs,.mod-footer-nav{display:none!important}
+  .content{max-width:100%;padding:0}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<div class="setup-overlay" id="setupScreen">
+  <div class="setup">
+    <div class="setup-logo">
+      <svg viewBox="0 0 80 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M79.4559 21.0679H74.3684L74.3489 28.1826C74.3489 31.6035 77.2689 32.2993 79.4832 32.3929C79.7736 32.4046 80.0017 32.6463 80.0017 32.9387V37.5486C80.0017 37.8585 79.7483 38.1022 79.4383 38.0944C75.6062 38.0028 72.4133 36.9658 70.509 35.0107C67.8444 32.274 67.9067 29.1455 67.9262 28.8707L67.9828 9.20301C67.9828 8.90283 68.2284 8.65918 68.5286 8.65918H73.8675C74.1696 8.65918 74.4152 8.90673 74.4133 9.20886L74.3684 15.6744H79.4559C79.758 15.6744 80.0017 15.9181 80.0017 16.2202V20.5221C80.0017 20.8243 79.758 21.0679 79.4559 21.0679Z" fill="#0A4EE4"/>
+      <path d="M32.6922 36.6948L32.7059 5.75477C32.7059 5.45264 32.4622 5.20898 32.1601 5.20898H26.8114C26.5093 5.20898 26.2656 5.45264 26.2656 5.75477V36.6948C26.2656 36.9969 26.5093 37.2406 26.8114 37.2406H32.1464C32.4486 37.2406 32.6922 36.9969 32.6922 36.6948Z" fill="#0A4EE4"/>
+      <path d="M61.2526 24.6068C59.6153 23.9909 57.4438 23.527 55.5239 23.2112C54.5726 23.0435 53.8144 22.7999 53.2667 22.4841C52.3291 22.0066 52.3154 20.5251 53.2394 19.9872C54.288 19.2757 56.8493 19.342 57.9311 20.1412C58.3463 20.3868 58.6777 20.837 58.9155 21.375C58.9954 21.5563 59.1962 21.6498 59.3853 21.5933L64.2037 20.1256C64.5254 20.0281 64.6794 19.6655 64.5351 19.3615C63.9289 18.0769 62.9835 16.9854 61.6951 16.1219C58.549 13.851 52.0581 13.8841 49.0446 16.2388C46.3469 17.9795 45.6744 22.7434 47.7582 25.2013C49.5222 27.3065 52.3681 28.0608 55.1262 28.6417L55.1535 28.6476C56.3523 28.8347 58.4029 29.2382 59.0519 29.7177C60.0772 30.3297 59.97 31.7468 58.9876 32.4057C58.436 32.813 57.5452 33.0197 56.3386 33.0197C54.0074 33.0158 52.4499 32.1679 51.7463 30.2089C51.68 30.0257 51.4714 29.9126 51.2823 29.9633L46.4268 31.2205C46.1267 31.2985 45.9493 31.6104 46.0389 31.9067C46.5847 33.6746 47.6393 35.1404 49.185 36.1735C54.3758 39.6607 65.9541 38.766 65.7846 30.5948C65.7846 29.0004 65.3674 27.7119 64.541 26.7607C63.732 25.8309 62.6249 25.1058 61.2487 24.6068H61.2526Z" fill="#0A4EE4"/>
+      <path d="M42.5212 14.8066H37.0927C36.7912 14.8066 36.5469 15.051 36.5469 15.3524V36.6945C36.5469 36.9959 36.7912 37.2402 37.0927 37.2402H42.5212C42.8227 37.2402 43.067 36.9959 43.067 36.6945V15.3524C43.067 15.051 42.8227 14.8066 42.5212 14.8066Z" fill="#0A4EE4"/>
+      <path d="M39.8054 7.42062C37.8445 7.42062 36.2539 5.83006 36.2539 3.86914V7.61749C36.2539 9.57841 37.8445 11.169 39.8054 11.169C41.7663 11.169 43.3569 9.57841 43.3569 7.61749V3.86914C43.3569 5.83006 41.7663 7.42062 39.8054 7.42062Z" fill="#E64E36"/>
+      <path d="M43.3451 4.20081C43.5283 2.24795 42.0937 0.51632 40.1409 0.333097C38.188 0.149873 36.4564 1.58444 36.2732 3.53729C36.0899 5.49015 37.5245 7.22177 39.4774 7.405C41.4302 7.58822 43.1618 6.15366 43.3451 4.20081Z" fill="#0A4EE4"/>
+      <path d="M11.8259 14.4463C5.29409 14.4463 0 19.7404 0 26.2722C0 32.8041 5.29409 38.0982 11.8259 38.0982C18.3578 38.0982 23.6519 32.8041 23.6519 26.2722C23.6519 19.7404 18.3578 14.4463 11.8259 14.4463ZM11.8259 32.077C8.61946 32.077 6.02115 29.4787 6.02115 26.2722C6.02115 23.0657 8.61946 20.4674 11.8259 20.4674C15.0324 20.4674 17.6307 23.0657 17.6307 26.2722C17.6307 29.4787 15.0324 32.077 11.8259 32.077Z" fill="#0A4EE4"/>
+      </svg>
+    </div>
+    <div class="setup-eyebrow">Onboarding · Suporte &amp; CX · Olist Conta Digital</div>
+    <h2>Bem-vindo(a) à sua trilha</h2>
+    <p>Antes de começar, informe seu nome completo. Assim conseguimos identificar seu progresso na trilha da Conta Digital.</p>
+    <div class="row">
+      <input type="text" id="setupNameInput" placeholder="Seu nome completo" autocomplete="name">
+      <button class="btn primary" id="setupNameBtn">Começar</button>
+    </div>
+    <small>Seu progresso é salvo automaticamente neste navegador, neste computador. Para acompanhar de outro dispositivo, use Exportar e depois Importar.</small>
+  </div>
+</div>
+<div id="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 80 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M79.4559 21.0679H74.3684L74.3489 28.1826C74.3489 31.6035 77.2689 32.2993 79.4832 32.3929C79.7736 32.4046 80.0017 32.6463 80.0017 32.9387V37.5486C80.0017 37.8585 79.7483 38.1022 79.4383 38.0944C75.6062 38.0028 72.4133 36.9658 70.509 35.0107C67.8444 32.274 67.9067 29.1455 67.9262 28.8707L67.9828 9.20301C67.9828 8.90283 68.2284 8.65918 68.5286 8.65918H73.8675C74.1696 8.65918 74.4152 8.90673 74.4133 9.20886L74.3684 15.6744H79.4559C79.758 15.6744 80.0017 15.9181 80.0017 16.2202V20.5221C80.0017 20.8243 79.758 21.0679 79.4559 21.0679Z" fill="#0A4EE4"/>
+        <path d="M32.6922 36.6948L32.7059 5.75477C32.7059 5.45264 32.4622 5.20898 32.1601 5.20898H26.8114C26.5093 5.20898 26.2656 5.45264 26.2656 5.75477V36.6948C26.2656 36.9969 26.5093 37.2406 26.8114 37.2406H32.1464C32.4486 37.2406 32.6922 36.9969 32.6922 36.6948Z" fill="#0A4EE4"/>
+        <path d="M61.2526 24.6068C59.6153 23.9909 57.4438 23.527 55.5239 23.2112C54.5726 23.0435 53.8144 22.7999 53.2667 22.4841C52.3291 22.0066 52.3154 20.5251 53.2394 19.9872C54.288 19.2757 56.8493 19.342 57.9311 20.1412C58.3463 20.3868 58.6777 20.837 58.9155 21.375C58.9954 21.5563 59.1962 21.6498 59.3853 21.5933L64.2037 20.1256C64.5254 20.0281 64.6794 19.6655 64.5351 19.3615C63.9289 18.0769 62.9835 16.9854 61.6951 16.1219C58.549 13.851 52.0581 13.8841 49.0446 16.2388C46.3469 17.9795 45.6744 22.7434 47.7582 25.2013C49.5222 27.3065 52.3681 28.0608 55.1262 28.6417L55.1535 28.6476C56.3523 28.8347 58.4029 29.2382 59.0519 29.7177C60.0772 30.3297 59.97 31.7468 58.9876 32.4057C58.436 32.813 57.5452 33.0197 56.3386 33.0197C54.0074 33.0158 52.4499 32.1679 51.7463 30.2089C51.68 30.0257 51.4714 29.9126 51.2823 29.9633L46.4268 31.2205C46.1267 31.2985 45.9493 31.6104 46.0389 31.9067C46.5847 33.6746 47.6393 35.1404 49.185 36.1735C54.3758 39.6607 65.9541 38.766 65.7846 30.5948C65.7846 29.0004 65.3674 27.7119 64.541 26.7607C63.732 25.8309 62.6249 25.1058 61.2487 24.6068H61.2526Z" fill="#0A4EE4"/>
+        <path d="M42.5212 14.8066H37.0927C36.7912 14.8066 36.5469 15.051 36.5469 15.3524V36.6945C36.5469 36.9959 36.7912 37.2402 37.0927 37.2402H42.5212C42.8227 37.2402 43.067 36.9959 43.067 36.6945V15.3524C43.067 15.051 42.8227 14.8066 42.5212 14.8066Z" fill="#0A4EE4"/>
+        <path d="M39.8054 7.42062C37.8445 7.42062 36.2539 5.83006 36.2539 3.86914V7.61749C36.2539 9.57841 37.8445 11.169 39.8054 11.169C41.7663 11.169 43.3569 9.57841 43.3569 7.61749V3.86914C43.3569 5.83006 41.7663 7.42062 39.8054 7.42062Z" fill="#E64E36"/>
+        <path d="M43.3451 4.20081C43.5283 2.24795 42.0937 0.51632 40.1409 0.333097C38.188 0.149873 36.4564 1.58444 36.2732 3.53729C36.0899 5.49015 37.5245 7.22177 39.4774 7.405C41.4302 7.58822 43.1618 6.15366 43.3451 4.20081Z" fill="#0A4EE4"/>
+        <path d="M11.8259 14.4463C5.29409 14.4463 0 19.7404 0 26.2722C0 32.8041 5.29409 38.0982 11.8259 38.0982C18.3578 38.0982 23.6519 32.8041 23.6519 26.2722C23.6519 19.7404 18.3578 14.4463 11.8259 14.4463ZM11.8259 32.077C8.61946 32.077 6.02115 29.4787 6.02115 26.2722C6.02115 23.0657 8.61946 20.4674 11.8259 20.4674C15.0324 20.4674 17.6307 23.0657 17.6307 26.2722C17.6307 29.4787 15.0324 32.077 11.8259 32.077Z" fill="#0A4EE4"/>
+        </svg>
+      </div>
+      <div class="brand-title"><h1>Trilha de Conhecimento</h1><p>Analista · Olist Conta Digital</p></div>
+    </div>
+    <div class="nav-item" id="navDashboard" data-nav="dashboard">
+      <div class="num"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 13h6V4H4v9zM4 20h6v-4H4v4zM14 20h6v-9h-6v9zM14 4v4h6V4h-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
+      <div class="lbl">Painel</div>
+    </div>
+    <div class="nav-section-label">Módulos da trilha</div>
+    <div id="navModules"></div>
+    <div class="sidebar-foot">
+      Conteúdo baseado na <a href="https://ajuda.olist.com/conta-digital" target="_blank" rel="noopener">Central de Ajuda da Olist Conta Digital</a>.<br>
+      Seu progresso é salvo neste navegador.
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="toggleSidebar" title="Mostrar/ocultar menu">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="breadcrumb" id="breadcrumb">Painel</div>
+      <div class="user-chip" id="userChip" style="display:none">
+        <div class="av" id="userAvatar"></div>
+        <span class="nm" id="userName"></span>
+      </div>
+      <div class="top-actions">
+        <span class="saved-pill" id="savedPill">✓ Salvo</span>
+        <button class="icon-btn" id="printBtn" title="Imprimir resumo"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9V2h12v7M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2M6 14h12v8H6v-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+        <button class="icon-btn" id="exportBtn" title="Exportar progresso (JSON)"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="icon-btn" id="themeBtn" title="Alternar tema claro/escuro">
+          <svg viewBox="0 0 24 24" fill="none" id="themeIcon"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.4 6.4l-1.4-1.4M7 7L5.6 5.6m12.8 0L17 7M7 17l-1.4 1.4M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+<button class="back-top" id="backTop"><svg viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================================
+   DADOS DA TRILHA — Olist Conta Digital
+   Reorganizado em Básico -> Intermediário -> Avançado
+========================================================================= */
+const MODULES = [
+/* ===== NÍVEL BÁSICO ===== */
+{
+  id:"m1", code:"M1", title:"Primeiros Passos e Cadastro", level:"Básico", time:"30 min",
+  description:"Como a Conta Digital nasce dentro do ERP: abertura, aprovação, acesso e cadastro de usuários.",
+  objectives:["Explicar como a conta é aberta","Orientar sobre prazos de aprovação","Cadastrar e liberar acesso de usuários"],
+  summary:"A Olist Conta Digital não é baixada como um app avulso: ela nasce de dentro do ERP do lojista, no menu Finanças. Pense nela como uma sala extra dentro da loja que o lojista já usa — para entrar nessa sala é preciso abrir a solicitação, enviar documentos e aguardar uma análise que normalmente leva até 2 dias úteis. Depois de aprovada, o próprio administrador do ERP decide quem mais da equipe pode acessar a conta e o que cada pessoa pode fazer.",
+  keyPoints:[
+    "A abertura da conta é feita pelo próprio lojista, dentro do ERP (Finanças > Conta Digital).",
+    "A análise de aprovação costuma levar até 2 dias úteis.",
+    "MEI pode abrir conta, desde que envie o Certificado da Condição de MEI (CCMEI).",
+    "Pessoa Física e clientes fora do Brasil têm regras específicas de elegibilidade.",
+    "Só o usuário Administrador consegue liberar acesso da Conta Digital para outros colaboradores."
+  ],
+  flow:[
+    "O administrador acessa o ERP e vai até Finanças > Conta Digital.",
+    "Preenche os dados da empresa e envia os documentos solicitados.",
+    "A solicitação passa por análise (normalmente até 2 dias úteis).",
+    "O lojista recebe o retorno sobre aprovação, reprovação ou pendência de documentos.",
+    "Com a conta aprovada, o administrador pode liberar o acesso para outros usuários do ERP."
+  ],
+  whenUse:["O lojista ainda não tem Conta Digital e quer saber por onde começar.","O lojista pergunta por que a aprovação está demorando.","Um colaborador precisa ganhar acesso à conta."],
+  whenNot:["Dúvidas sobre tarifas específicas (ver módulo Configurações da Conta).","Problemas com Pix ou boleto já em uso (ver módulos de recebimento)."],
+  commonErrors:["Achar que qualquer funcionário consegue abrir a conta sem ser pelo ERP.","Confundir a aprovação da conta com a aprovação de acesso de um novo usuário — são etapas diferentes.","Não considerar que MEI precisa enviar o CCMEI."],
+  tips:["Sempre confirme se já se passaram os 2 dias úteis antes de tratar como atraso.","Para dúvidas de aprovação, oriente o lojista a consultar o status dentro do próprio ERP.","Lembre o lojista que o Administrador é sempre o sócio conforme o contrato social."],
+  examples:[
+    {t:"Lojista pergunta como abrir a conta", d:"Oriente: Finanças > Conta Digital > iniciar solicitação, dentro do próprio ERP — não existe cadastro fora dessa tela."},
+    {t:"Lojista MEI com dúvida sobre elegibilidade", d:"Confirme que MEI pode abrir conta, desde que envie o Certificado da Condição de MEI (CCMEI)."},
+    {t:"Passaram mais de 2 dias úteis sem retorno", d:"Valide o prazo (dias úteis, não corridos) e, se realmente estourou, escale para verificação da análise."}
+  ],
+  faq:[
+    {q:"Pessoa Física pode abrir Conta Digital Olist?", a:"Existe uma orientação específica para esse caso na Central de Ajuda — consulte o artigo dedicado antes de responder ao lojista."},
+    {q:"Cliente mora fora do Brasil, pode abrir conta?", a:"Há regras específicas para quem mora no exterior; sempre confira o artigo oficial antes de confirmar."},
+    {q:"Quem pode liberar acesso a um novo colaborador?", a:"Somente o usuário Administrador, que é o sócio da empresa conforme o contrato social."}
+  ],
+  checklist:["Sei onde o lojista inicia a abertura da conta no ERP","Sei informar o prazo médio de aprovação","Sei orientar sobre documentos necessários","Sei diferenciar aprovação da conta x liberação de acesso de usuário"],
+  articles:[
+    {t:"Como abrir sua Conta Digital pelo ERP", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/como-abrir-uma-conta-pelo-erp"},
+    {t:"Como saber se minha conta foi aprovada", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/como-saber-se-minha-conta-foi-aprovada"},
+    {t:"Minha Conta Digital não foi aprovada, por qual motivo?", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/minha-conta-digital-nao-foi-aprovada-por-qual-motivo"},
+    {t:"Documentos necessários para abrir uma conta", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/documentos-necessarios-para-abrir-uma-conta"},
+    {t:"É possível abrir uma Conta Digital para clientes MEI?", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/e-possivel-abrir-uma-conta-digital-para-clientes-mei"},
+    {t:"Já se passaram 2 dias úteis e não recebi retorno, o que fazer?", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/ja-se-passaram-2-dias-uteis-e-ainda-nao-recebi-retorno-sobre-a-aprovacao-da-minha-conta-o-que-fazer"},
+    {t:"Moro no exterior, consigo abrir a conta digital?", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/moro-no-exterior-consigo-abrir-a-conta-digital"},
+    {t:"É possível abrir uma Conta Digital para Pessoa Física?", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/e-possivel-abrir-uma-conta-digital-para-pessoa-fisica"},
+    {t:"Como acessar minha conta", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/como-acessar-minha-conta"},
+    {t:"Como acessar o internet banking", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/como-acessar-o-internet-banking"},
+    {t:"Como cadastrar usuários na conta", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/como-cadastrar-usuarios-na-conta"},
+    {t:"Reconhecimento facial de usuários", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/reconhecimento-facial-de-usuarios"},
+    {t:"O que é possível acessar pelo internet banking", u:"https://ajuda.olist.com/primeiros-passos-e-cadastro/o-que-e-possivel-acessar-pelo-internet-banking"},
+    {t:"Permissões e ações (liberar acesso a colaboradores)", u:"https://ajuda.olist.com/conta-digital/permissoes-e-acoes"}
+  ],
+  quiz:[
+    {type:"single", q:"Onde o lojista inicia a abertura da Conta Digital?", opts:["Baixando um app específico","Dentro do ERP, em Finanças > Conta Digital","Ligando para a central telefônica","No site institucional da Olist"], correct:1, exp:"A abertura sempre começa dentro do próprio ERP que o lojista já usa, no menu Finanças."},
+    {type:"tf", q:"Verdadeiro ou falso: a análise de abertura de conta costuma levar até 2 dias úteis.", opts:["Verdadeiro","Falso"], correct:0, exp:"Esse é o prazo padrão informado para a análise da solicitação."},
+    {type:"single", q:"Um cliente MEI pergunta se pode abrir a Conta Digital. O que você responde?", opts:["Não, MEI nunca pode abrir conta digital","Sim, mas é necessário enviar o Certificado da Condição de MEI (CCMEI)","Sim, sem nenhum documento adicional","Só depois de 1 ano de CNPJ ativo"], correct:1, exp:"MEI pode abrir a conta desde que envie o CCMEI junto com a solicitação."},
+    {type:"situacao", q:"Um colaborador diz que não consegue acessar a Conta Digital mesmo com usuário no ERP. Qual a causa mais provável?", opts:["O acesso à Conta Digital precisa ser liberado à parte pelo Administrador","Todo usuário do ERP já nasce com acesso automático","O colaborador precisa abrir uma nova conta digital só para ele","Isso nunca acontece"], correct:0, exp:"Ter usuário no ERP não dá acesso automático à Conta Digital — o Administrador precisa liberar as permissões especificamente."},
+    {type:"tf", q:"Verdadeiro ou falso: qualquer colaborador do ERP pode liberar o acesso de outra pessoa à Conta Digital.", opts:["Verdadeiro","Falso"], correct:1, exp:"Somente o usuário Administrador, que é o sócio conforme contrato social, pode liberar esse acesso."}
+  ]
+},
+{
+  id:"m2", code:"M2", title:"Pix", level:"Básico", time:"20 min",
+  description:"Cadastro de chave, envio, recebimento e cobrança por Pix dentro da Conta Digital.",
+  objectives:["Orientar sobre cadastro de chave Pix","Explicar como pagar e cobrar por Pix","Explicar taxas e juros em cobranças"],
+  summary:"O Pix dentro da Conta Digital funciona como a chave-mestra do dia a dia financeiro do lojista: serve tanto para pagar fornecedores quanto para receber de clientes, direto pelo Internet Banking. O lojista pode cadastrar uma chave própria, gerar cobranças com QR Code e, se precisar, incluir juros e multa em cobranças que vencerem.",
+  keyPoints:[
+    "Fazer um pagamento por Pix não tem tarifa.",
+    "Cobrar via QR Code/copia e cola tem uma tarifa que varia conforme o plano do ERP.",
+    "É possível incluir taxas e juros em cobranças por Pix.",
+    "O Pix pode ser feito e acompanhado direto pelo Internet Banking."
+  ],
+  flow:[
+    "O lojista cadastra a chave Pix da conta no Internet Banking.",
+    "Para receber, gera uma cobrança (QR Code ou copia e cola) e envia ao cliente.",
+    "Para pagar, insere a chave ou dados bancários do destinatário e confirma a transferência.",
+    "As transações aparecem no extrato e podem ser conciliadas com o ERP."
+  ],
+  whenUse:["Dúvidas sobre como cadastrar chave Pix.","Cliente quer parcelar um Pix no cartão de crédito.","Lojista quer cobrar com juros e multa via Pix."],
+  whenNot:["Cobrança por boleto (ver módulo Boletos).","Dúvidas de tarifa detalhada de outros meios (ver módulo Configurações/Tarifas)."],
+  commonErrors:["Achar que fazer um Pix (pagar) tem tarifa — pagar nunca tem custo.","Confundir tarifa de QR Code com tarifa de boleto.","Não saber que dá para parcelar Pix no cartão de crédito pelo Internet Banking."],
+  tips:["Reforce que enviar Pix é sempre gratuito; a tarifa existe apenas para quem recebe via QR Code/copia e cola.","Para cobranças recorrentes, verifique se o lojista já configurou taxas e juros previamente."],
+  examples:[
+    {t:"Lojista quer saber se paga tarifa ao enviar Pix", d:"Não. Fazer um pagamento por Pix nunca tem tarifa; a tarifa existe apenas ao receber via QR Code/copia e cola."},
+    {t:"Cliente quer parcelar uma compra grande", d:"Oriente sobre o Pix parcelado no cartão de crédito, disponível no Internet Banking."}
+  ],
+  faq:[
+    {q:"Cadastrar uma chave Pix tem custo?", a:"Não, o cadastro de chave ou o uso de dados bancários não tem custo."},
+    {q:"Dá pra colocar juros numa cobrança de Pix?", a:"Sim, é possível incluir taxas e juros em cobranças por Pix."}
+  ],
+  checklist:["Sei orientar o cadastro de chave Pix","Sei explicar a diferença de tarifa entre pagar e receber","Sei explicar Pix parcelado no cartão"],
+  articles:[
+    {t:"Como cadastrar chave Pix", u:"https://ajuda.olist.com/cd-pix/como-cadastrar-chave-pix"},
+    {t:"Como fazer Pix no Internet Banking", u:"https://ajuda.olist.com/cd-pix/como-fazer-pix-no-internet-banking"},
+    {t:"Como incluir taxas e juros em cobranças por Pix", u:"https://ajuda.olist.com/cd-pix/como-incluir-taxas-e-juros-em-cobrancas-por-pix"},
+    {t:"Como pagar por Pix", u:"https://ajuda.olist.com/cd-pix/como-pagar-por-pix"},
+    {t:"Como fazer Pix parcelado pelo Internet Banking", u:"https://ajuda.olist.com/carteira/como-fazer-pix-parcelado-pelo-internet-banking"}
+  ],
+  quiz:[
+    {type:"tf", q:"Verdadeiro ou falso: fazer (enviar) um pagamento por Pix tem tarifa.", opts:["Verdadeiro","Falso"], correct:1, exp:"Enviar um Pix nunca tem tarifa; a cobrança existe apenas para quem recebe via QR Code/copia e cola."},
+    {type:"single", q:"O que é necessário para receber um Pix por QR Code?", opts:["Gerar a cobrança pelo Internet Banking e compartilhar o código","Ligar para o banco pedir liberação","Nada, é automático sem gerar cobrança","Só é possível pelo aplicativo, nunca pelo Internet Banking"], correct:0, exp:"A cobrança em Pix é gerada no Internet Banking (QR Code ou copia e cola) e enviada ao pagador."},
+    {type:"situacao", q:"Lojista quer parcelar uma cobrança em Pix para o cliente. O que você orienta?", opts:["Isso não existe para Pix","Explicar o Pix parcelado no cartão de crédito, disponível no Internet Banking","Só é possível via boleto","Cancelar o Pix e emitir cartão"], correct:1, exp:"O Pix parcelado no cartão de crédito é um recurso disponível no Internet Banking."},
+    {type:"tf", q:"Verdadeiro ou falso: é possível incluir juros e multa em uma cobrança feita por Pix.", opts:["Verdadeiro","Falso"], correct:0, exp:"Sim, o lojista pode configurar taxas e juros nas cobranças por Pix."}
+  ]
+},
+{
+  id:"m3", code:"M3", title:"Boletos", level:"Básico", time:"20 min",
+  description:"Emissão, segunda via e alteração de vencimento de boletos pela Conta Digital.",
+  objectives:["Emitir um boleto","Emitir segunda via","Alterar data de vencimento","Configurar emissão automática"],
+  summary:"O boleto continua sendo um dos jeitos mais tradicionais de cobrar no Brasil, e a Conta Digital deixa esse processo dentro do próprio fluxo de vendas do lojista. É possível emitir manualmente, gerar automaticamente ao fechar um pedido de venda ou PDV, tirar uma segunda via quando o cliente perde o boleto original e até alterar a data de vencimento quando necessário.",
+  keyPoints:[
+    "Emitir um boleto não tem tarifa; a tarifa existe quando o lojista recebe o pagamento via boleto.",
+    "É possível configurar a emissão automática do boleto ao fechar um pedido de venda ou no PDV.",
+    "A segunda via serve para quando o cliente perde o boleto original ou ele expira.",
+    "A data de vencimento de um boleto pode ser alterada, dentro das regras da conta."
+  ],
+  flow:[
+    "O lojista fecha um pedido de venda ou usa o PDV com a forma de pagamento boleto.",
+    "O boleto é emitido — manual ou automaticamente, conforme a configuração.",
+    "O cliente recebe o boleto e realiza o pagamento até o vencimento.",
+    "Se necessário, o lojista emite segunda via ou altera o vencimento antes do pagamento."
+  ],
+  whenUse:["Lojista quer automatizar a emissão de boleto nas vendas.","Cliente perdeu o boleto e precisa de segunda via.","Data de vencimento precisa ser adjusted."],
+  whenNot:["Dúvidas sobre conciliação de boletos recebidos de fornecedores (ver módulo Pagamentos e Conciliação — Buscador de Boletos/DDA)."],
+  commonErrors:["Confundir emissão (grátis) com recebimento de boleto (tarifado).","Não saber que a emissão pode ser automática ao criar o pedido de venda.","Emitir segunda via sem verificar se o boleto original ainda está válido."],
+  tips:["Sempre confirme se o lojista já habilitou a emissão automática antes de orientar um passo manual.","Para segunda via, confirme se o boleto original ainda não foi pago."],
+  examples:[
+    {t:"Lojista pergunta se pode gerar boleto direto na venda", d:"Sim — é possível configurar para emitir cobrança automaticamente ao criar um pedido de venda ou no PDV."},
+    {t:"Cliente perdeu o boleto", d:"Oriente a emissão de segunda via pelo Internet Banking."}
+  ],
+  faq:[
+    {q:"Emitir boleto tem custo?", a:"Não, a emissão em si não tem tarifa; a tarifa é cobrada quando o pagamento é efetivamente recebido via boleto."},
+    {q:"Dá para mudar o vencimento de um boleto já emitido?", a:"Sim, é possível alterar a data de vencimento de um boleto."}
+  ],
+  checklist:["Sei emitir um boleto manualmente","Sei emitir segunda via","Sei alterar vencimento","Sei configurar emissão automática na venda"],
+  articles:[
+    {t:"Como alterar a data de vencimento de um boleto", u:"https://ajuda.olist.com/conta-digital-boleto/como-alterar-a-data-de-vencimento-de-um-boleto"},
+    {t:"Como emitir cobrança automaticamente ao criar um pedido de venda ou no PDV?", u:"https://ajuda.olist.com/conta-digital-boleto/como-emitir-cobranca-automaticamente-ao-criar-um-pedido-de-venda-ou-no-pdv-"},
+    {t:"Como emitir segunda via de boleto", u:"https://ajuda.olist.com/conta-digital-boleto/como-emitir-segunda-via-de-boleto"},
+    {t:"Como emitir um boleto", u:"https://ajuda.olist.com/conta-digital-boleto/como-emitir-um-boleto"}
+  ],
+  quiz:[
+    {type:"tf", q:"Verdadeiro ou falso: emitir um boleto sempre tem tarifa, mesmo que ele nunca seja pago.", opts:["Verdadeiro","Falso"], correct:1, exp:"A emissão em si é gratuita; a tarifa é cobrada apenas quando o pagamento é recebido."},
+    {type:"single", q:"O lojista quer que todo pedido de venda já gere boleto automaticamente. Isso é possível?", opts:["Não, sempre precisa emitir manualmente","Sim, existe configuração para emitir automaticamente ao criar o pedido ou no PDV","Só é possível para boletos acima de R$500","Só clientes Domine têm esse recurso"], correct:1, exp:"É possível configurar a emissão automática de cobrança ao criar um pedido de venda ou no PDV."},
+    {type:"situacao", q:"Um cliente diz que perdeu o boleto e o vencimento está próximo. O que você orienta ao lojista?", opts:["Cancelar a venda","Emitir uma segunda via do boleto","Pedir para o cliente pagar em dinheiro apenas","Esperar o boleto vencer"], correct:1, exp:"A segunda via existe exatamente para esse cenário — boleto perdido ou extraviado antes do pagamento."},
+    {type:"tf", q:"Verdadeiro ou falso: é possível alterar a data de vencimento de um boleto já emitido.", opts:["Verdadeiro","Falso"], correct:0, exp:"Sim, a Conta Digital permite alterar a data de vencimento de um boleto."}
+  ]
+},
+{
+  id:"m4", code:"M4", title:"Relatórios e Extratos", level:"Básico", time:"15 min",
+  description:"Consulta de saldo, extrato, tarifas cobradas e informe de rendimentos.",
+  objectives:["Consultar saldo e extrato","Explicar onde ver as tarifas cobradas","Localizar o informe de rendimentos"],
+  summary:"Esse módulo é sobre dar transparência ao lojista: mostrar quanto ele tem, o que entrou e saiu, quanto pagou de tarifa em cada operação e, uma vez por ano, gerar o informe de rendimentos para a declaração de imposto de renda. Pense no extrato como o 'diário' financeiro da conta — cada linha conta uma transação, com a tarifa (se houver) logo ao lado.",
+  keyPoints:[
+    "O saldo pode ser consultado a qualquer momento pelo Internet Banking ou app.",
+    "O extrato traz o histórico de transações da conta.",
+    "As tarifas cobradas aparecem vinculadas a cada transação no extrato.",
+    "O Informe de Rendimentos é usado para a declaração de Imposto de Renda."
+  ],
+  flow:[
+    "O lojista acessa o Internet Banking ou app.",
+    "Consulta o saldo atual na tela inicial.",
+    "Acessa o extrato para ver o histórico detalhado de transações e tarifas.",
+    "Uma vez por ano, gera o Informe de Rendimentos para fins fiscais."
+  ],
+  whenUse:["Lojista não sabe onde ver o saldo.","Lojista quer entender uma tarifa específica no extrato.","Época de declarar Imposto de Renda."],
+  whenNot:["Dúvida sobre o valor exato de uma tarifa futura (ver módulo Configurações da Conta / Tarifas)."],
+  commonErrors:["Não indicar onde a tarifa aparece detalhada dentro do extrato.","Esquecer de mencionar o Informe de Rendimentos na época de IR."],
+  tips:["Sempre oriente o lojista a olhar o extrato antes de abrir um chamado sobre uma cobrança que ele não reconhece.","Na época de declaração de IR, adiante a informação do Informe de Rendimentos para reduzir chamados."],
+  examples:[
+    {t:"Lojista não reconhece uma tarifa", d:"Oriente a consultar o extrato, onde a tarifa aparece vinculada à transação que a gerou."},
+    {t:"Lojista precisa declarar Imposto de Renda", d:"Indique o Informe de Rendimentos, disponível na área de Relatórios e Extratos."}
+  ],
+  faq:[
+    {q:"Onde vejo as tarifas que já paguei?", a:"As tarifas cobradas aparecem no extrato, vinculadas a cada transação."},
+    {q:"Onde encontro o Informe de Rendimentos?", a:"Na área de Relatórios e Extratos da Conta Digital."}
+  ],
+  checklist:["Sei orientar a consulta de saldo","Sei orientar a consulta de extrato","Sei localizar tarifas cobradas","Sei localizar o informe de rendimentos"],
+  articles:[
+    {t:"Como ver meu saldo?", u:"https://ajuda.olist.com/relatorios-e-extratos/como-ver-meu-saldo"},
+    {t:"Como consultar o extrato da sua conta", u:"https://ajuda.olist.com/relatorios-e-extratos/como-consultar-o-extrato"},
+    {t:"Como vejo as tarifas cobradas na minha conta", u:"https://ajuda.olist.com/relatorios-e-extratos/como-vejo-as-tarifas-cobradas-na-minha-conta"},
+    {t:"Informe de Rendimentos", u:"https://ajuda.olist.com/relatorios-e-extratos/informe-de-rendimentos"}
+  ],
+  quiz:[
+    {type:"single", q:"Onde o lojista consegue ver as tarifas já cobradas em cada transação?", opts:["No extrato da conta","Somente ligando para o suporte","No contrato social","Não é possível consultar"], correct:0, exp:"As tarifas cobradas aparecem vinculadas a cada transação, dentro do extrato."},
+    {type:"tf", q:"Verdadeiro ou falso: o Informe de Rendimentos serve para apoiar a declaração de Imposto de Renda.", opts:["Verdadeiro","Falso"], correct:0, exp:"Sim, esse é justamente o uso do Informe de Rendimentos."},
+    {type:"situacao", q:"Lojista pergunta 'quanto eu tenho na conta agora?'. Onde ele confere isso?", opts:["No extrato do mês passado apenas","No saldo, disponível no Internet Banking ou app","Só falando com o gerente","No informe de rendimentos"], correct:1, exp:"O saldo atual é consultado diretamente no Internet Banking ou no aplicativo."}
+  ]
+},
+{
+  id:"m5", code:"M5", title:"Aplicativo", level:"Básico", time:"15 min",
+  description:"Download do app, consulta de extrato, agendamento de Pix recorrente e buscador de boletos no celular.",
+  objectives:["Orientar o download do aplicativo","Consultar extrato pelo app","Agendar Pix recorrente","Ativar buscador de boletos no app"],
+  summary:"O aplicativo é a versão da Conta Digital para o bolso do lojista: além de consultar saldo e extrato de qualquer lugar, ele permite agendar transferências Pix recorrentes (por exemplo, um pagamento mensal fixo) e ativar o buscador de boletos direto pelo celular, sem depender do computador.",
+  keyPoints:[
+    "O app é baixado nas lojas oficiais (Google Play / App Store).",
+    "É possível consultar o extrato completo pelo aplicativo.",
+    "Dá para agendar uma transferência Pix recorrente pelo app.",
+    "O buscador de boletos também pode ser ativado direto no aplicativo."
+  ],
+  flow:[
+    "O lojista baixa o aplicativo da Conta Digital na loja oficial.",
+    "Faz login com os mesmos dados de acesso da conta.",
+    "Consulta saldo e extrato direto na tela inicial do app.",
+    "Configura agendamentos de Pix recorrente ou ativa o buscador de boletos, conforme a necessidade."
+  ],
+  whenUse:["Lojista não sabe onde baixar o aplicativo.","Lojista quer agendar um pagamento Pix que se repete todo mês.","Lojista prefere resolver tudo pelo celular."],
+  whenNot:["Configurações avançadas de permissões de outros usuários (ver módulo Primeiros Passos / Segurança)."],
+  commonErrors:["Indicar sites de terceiros em vez das lojas oficiais para baixar o app.","Não mencionar que o Pix recorrente pode ser agendado, deixando o lojista fazer manualmente todo mês.","Esquecer de mencionar que o app também tem buscador de boletos."],
+  tips:["Sempre indique Google Play ou App Store, nunca links externos.","Para pagamentos mensais fixos, sempre ofereça o agendamento de Pix recorrente como solução."],
+  examples:[
+    {t:"Lojista paga o aluguel todo mês manualmente", d:"Ofereça o agendamento de transferência Pix recorrente pelo aplicativo."},
+    {t:"Lojista só usa o celular para tudo", d:"Mostre que dá para consultar extrato e ativar o buscador de boletos direto pelo app."}
+  ],
+  faq:[
+    {q:"O app faz tudo que o Internet Banking faz?", a:"Os principais recursos do dia a dia — extrato, Pix recorrente, buscador de boletos — estão disponíveis no app; para configurações mais avançadas, o Internet Banking pode ser necessário."},
+    {q:"Como eu baixo o aplicativo?", a:"Pesquisando 'Olist Conta Digital' na Google Play ou na App Store."}
+  ],
+  checklist:["Sei orientar o download do app","Sei consultar extrato pelo app","Sei agendar Pix recorrente","Sei ativar o buscador de boletos no app"],
+  articles:[
+    {t:"Como acessar o extrato pelo aplicativo", u:"https://ajuda.olist.com/aplicativo/como-acessar-o-extrato-pelo-aplicativo"},
+    {t:"Como agendar uma transferência Pix recorrente", u:"https://ajuda.olist.com/aplicativo/como-agendar-uma-transferencia-pix-recorrente"},
+    {t:"Como ativar o buscador de boletos no aplicativo", u:"https://ajuda.olist.com/aplicativo/como-ativar-o-buscador-de-boletos-no-aplicativo"},
+    {t:"Como baixar o aplicativo da Conta Digital", u:"https://ajuda.olist.com/aplicativo/como-baixar-o-aplicativo-da-conta-digital"}
+  ],
+  quiz:[
+    {type:"single", q:"Onde o lojista deve baixar o aplicativo da Conta Digital?", opts:["Em qualquer site que aparecer na busca","Nas lojas oficiais, Google Play ou App Store","Só recebendo por e-mail um arquivo instalador","Não existe aplicativo"], correct:1, exp:"O app deve sempre ser baixado nas lojas oficiais, Google Play ou App Store."},
+    {type:"tf", q:"Verdadeiro ou falso: é possível agendar uma transferência Pix recorrente pelo aplicativo.", opts:["Verdadeiro","Falso"], correct:0, exp:"Sim, o agendamento de Pix recorrente está disponível no app."},
+    {type:"situacao", q:"Lojista paga o mesmo fornecedor todo mês manualmente via Pix. Qual recurso resolve isso?", opts:["Buscador de boletos","Agendamento de Pix recorrente pelo app","Carteira de cartões","Informe de rendimentos"], correct:1, exp:"O agendamento de Pix recorrente evita que o lojista precise repetir o pagamento manualmente todo mês."}
+  ]
+},
+
+/* ===== NÍVEL INTERMEDIÁRIO ===== */
+{
+  id:"m6", code:"M6", title:"Link de Pagamento", level:"Intermediário", time:"20 min",
+  description:"Como emitir, compartilhar e estornar cobranças feitas por link de pagamento, e o papel do antifraude.",
+  objectives:["Emitir uma cobrança via link","Compartilhar o link com o cliente","Realizar um estorno","Entender o antifraude"],
+  summary:"O link de pagamento é útil quando o lojista vende fora do fluxo tradicional do carrinho — por WhatsApp, redes sociais ou telefone. Ele gera um link único, que pode ser compartilhado com o cliente, e conta com um antifraude para reduzir o risco de golpes e chargebacks. Se algo der errado depois da venda, também é possível estornar.",
+  keyPoints:[
+    "A tarifa do link de pagamento varia conforme a quantidade de parcelas e o plano do ERP.",
+    "O link pode ser compartilhado por qualquer canal (WhatsApp, redes sociais etc.).",
+    "Existe um sistema antifraude atuando nas cobranças por link.",
+    "É possível estornar uma venda feita por link de pagamento."
+  ],
+  flow:[
+    "O lojista emite a cobrança via link, informando valor e condições.",
+    "Compartilha o link com o cliente pelo canal que preferir.",
+    "O cliente paga e o antifraude avalia a transação.",
+    "Se necessário, o lojista pode estornar a venda depois."
+  ],
+  whenUse:["Venda fora do site (WhatsApp, telefone, redes sociais).","Cliente pede para pagar parcelado sem estar no checkout.","Necessidade de estornar uma venda feita por link."],
+  whenNot:["Venda feita diretamente no checkout do e-commerce (ver ecossistema Ecommerce).","Cobrança fixa e recorrente sem link (ver módulo Pix/Boletos)."],
+  commonErrors:["Achar que o link de pagamento tem tarifa fixa, sem considerar parcelamento e plano.","Ignorar o papel do antifraude ao investigar uma reprovação.","Não saber que dá para estornar uma venda feita por link."],
+  tips:["Sempre pergunte quantas parcelas foram usadas antes de explicar a tarifa — ela muda conforme o número de parcelas.","Ao investigar reprovação, lembre que o antifraude pode ser o motivo."],
+  examples:[
+    {t:"Lojista quer vender pelo WhatsApp", d:"Oriente a emitir uma cobrança via link e compartilhar diretamente na conversa."},
+    {t:"Cliente teve a venda cancelada e quer o dinheiro de volta", d:"Explique o processo de estorno de uma venda feita por link."}
+  ],
+  faq:[
+    {q:"O link de pagamento tem antifraude?", a:"Sim, existe um antifraude atuando nas cobranças feitas por link, para reduzir o risco de fraude."},
+    {q:"É possível estornar uma venda por link?", a:"Sim, o estorno é um recurso disponível para vendas realizadas por link de pagamento."}
+  ],
+  checklist:["Sei emitir uma cobrança via link","Sei compartilhar o link com o cliente","Sei realizar um estorno","Sei explicar o papel do antifraude"],
+  articles:[
+    {t:"O que é um antifraude e como funciona", u:"https://ajuda.olist.com/link-de-pagamento/o-que-e-um-antifraude-e-como-funciona"},
+    {t:"Como compartilhar o link de pagamento", u:"https://ajuda.olist.com/link-de-pagamento/como-compartilhar-o-link-de-pagamento"},
+    {t:"Como emitir uma cobrança via link?", u:"https://ajuda.olist.com/link-de-pagamento/como-emitir-uma-cobranca-via-link"},
+    {t:"Como estornar uma venda", u:"https://ajuda.olist.com/link-de-pagamento/como-estornar-uma-venda-"}
+  ],
+  quiz:[
+    {type:"single", q:"Quando o link de pagamento costuma ser mais indicado?", opts:["Apenas para vendas dentro do checkout do site","Para vendas fora do fluxo tradicional, como WhatsApp e redes sociais","Somente para clientes MEI","Apenas para valores acima de R$5.000"], correct:1, exp:"O link é útil justamente para vender fora do carrinho tradicional, compartilhando por qualquer canal."},
+    {type:"tf", q:"Verdadeiro ou falso: a tarifa do link de pagamento é sempre a mesma, independentemente do número de parcelas.", opts:["Verdadeiro","Falso"], correct:1, exp:"A tarifa varia conforme a quantidade de parcelas e o plano contratado no ERP."},
+    {type:"situacao", q:"Uma cobrança por link foi reprovada sem explicação clara. O que pode ter influenciado?", opts:["O sistema antifraude que atua nas cobranças por link","Falta de internet do cliente","O link expira em 5 segundos","Isso nunca acontece com link de pagamento"], correct:0, exp:"O antifraude avalia as transações por link e pode reprovar cobranças suspeitas."},
+    {type:"tf", q:"Verdadeiro ou falso: não é possível estornar uma venda feita por link de pagamento.", opts:["Verdadeiro","Falso"], correct:1, exp:"É sim possível estornar uma venda realizada por link de pagamento."}
+  ]
+},
+{
+  id:"m7", code:"M7", title:"Maquininha no Celular", level:"Intermediário", time:"25 min",
+  description:"Ativação do recurso, emissão de cobranças, fluxos operacionais completos e regras de conciliação automática.",
+  objectives:["Ativar a Maquininha no Celular","Emitir cobranças por aproximação","Diferenciar fluxos com e sem conciliação","Operar pelos caminhos do PDV, Pedidos e Contas a Receber"],
+  summary:"A Maquininha no Celular (Tap on Phone) transforma o smartphone do lojista em uma leitora de cartão por aproximação. Para garantir a conciliação automática no sistema, o pagamento deve estar estritamente vinculado a um cliente e a um Pedido de Venda ou Conta a Receber.",
+  keyPoints:[
+    "A conciliação automática exige a seleção de um cliente no Pedido de Venda ou Conta a Receber.",
+    "Cobranças avulsas feitas no app da maquininha NÃO conciliam e NÃO podem ser vinculadas posteriormente.",
+    "O Pagamento Integrado é voltado para marketplaces e não se aplica à Conta Digital.",
+    "As tarifas variam conforme parcelamento, plano do ERP e bandeira do cartão."
+  ],
+  flow:[
+    "1. Pedido via PDV: Criar Pedido -> Selecionar Cliente -> Gerar Pagamento.",
+    "2. Conta a Receber: Contas a Receber -> Selecionar Cliente -> Cartão -> Gateway Olist Conta Digital -> Salvar e Emitir.",
+    "3. Emitir via Pedido Existente: Criar Pedido -> Salvar -> Mais Ações -> Emitir Cobrança.",
+    "4. Cobrança Avulsa: Venda direta pelo app (Sem vínculo com pedido)."
+  ],
+  whenUse:["Vendas presenciais rápidas no balcão via PDV ou smartphone.","Cobrança direta de faturas a receber registradas no ERP."],
+  whenNot:["Vendas online via e-commerce ou links de pagamento.","Cobranças avulsas que necessitem de conciliação contábil posterior."],
+  commonErrors:["Realizar venda no PDV mantendo 'Consumidor Final' e esperar conciliação automática.","Fazer cobrança avulsa em momentos de instabilidade achando que dará para vincular ao pedido depois.","Confundir 'Pagamento Integrado' de marketplaces com a integração nativa da Conta Digital."],
+  tips:["Sempre oriente o lojista a selecionar o cliente no PDV antes de gerar o pagamento.","Reforce que cobrança avulsa não gera vínculo com Pedido de Venda em hipótese alguma."],
+  examples:[
+    {t:"Lojista diz que a venda não conciliou", d:"Verifique se ele usou 'Consumidor Final' no PDV ou fez uma cobrança avulsa direta pelo aplicativo."},
+    {t:"Sistema em instabilidade", d:"Oriente o lojista que, se optar por cobrança avulsa para não perder a venda, ele terá que tratar a conciliação manualmente depois."}
+  ],
+  faq:[
+    {q:"Posso vincular uma cobrança avulsa a um Pedido de Venda depois?", a:"Não. Esse comportamento é padrão do sistema e não há funcionalidade para vínculo posterior."},
+    {q:"Qual a diferença entre Pagamento Integrado e Conta Digital?", a:"O Pagamento Integrado é exclusivo para conciliação em integrações com marketplaces. A Conta Digital é a solução nativa de cobrança do ERP."}
+  ],
+  checklist:["Sei explicar a importância da seleção do cliente para a conciliação","Sei os 4 fluxos operacionais de cobrança","Sei diferenciar Pagamento Integrado de Conta Digital","Sei orientar o lojista em casos de instabilidade"],
+  articles:[
+    {t:"Maquininha no Celular: o que é e como ativar o recurso na conta", u:"https://ajuda.olist.com/maquininha-no-celular/como-ativar-o-recurso-na-conta"},
+    {t:"Como emitir cobranças", u:"https://ajuda.olist.com/maquininha-no-celular/como-emitir-cobrancas"},
+    {t:"Como os clientes podem pagar", u:"https://ajuda.olist.com/maquininha-no-celular/como-os-clientes-podem-pagar"},
+    {t:"Meu celular é compatível?", u:"https://ajuda.olist.com/maquininha-no-celular/meu-celular-e-compativel"}
+  ],
+  tapStructure:{
+    part1:{
+      title:"1. Visão Geral e Conceitos Fundamentais",
+      theory:"O Tap on Phone transforma o celular do lojista em uma máquina de cartão sem custo de aluguel. A seleção correta do cliente é o pilar central que garante a conciliação automática no ERP. É fundamental não confundir a Integração da Conta Digital com o 'Pagamento Integrado', que é um recurso exclusivo para reconciliação de pedidos vindos de marketplaces."
+    },
+    part2:[
+      {
+        title:"Aula 2.1 — Criando Pedido e Emitindo Cobrança via Pedido de Venda",
+        theory:"Passo a passo completo para criar o Pedido de Venda diretamente no menu de Vendas, salvar o registro, acessar 'Mais ações' e acionar a emissão da cobrança.",
+        intro:"Observe no vídeo como o operador insere o cliente, adiciona os produtos, escolhe a forma de pagamento e finaliza acionando a opção 'Emitir cobrança' no menu superior.",
+        video:"01.mp4"
+      },
+      {
+        title:"Aula 2.2 — Cobrança via PDV sem Vínculo de Cliente (cenário que NÃO concilia)",
+        theory:"Demonstração do fluxo rápido de venda pelo PDV mantendo o cadastro genérico de 'Consumidor Final'.",
+        intro:"Atenção especial ao cliente selecionado durante o vídeo: veja o que acontece quando a venda é concluída sem a identificação do comprador.",
+        video:"02.mp4",
+        alert:"Atenção: esse fluxo gera a cobrança normalmente, porém não realiza a conciliação automática no sistema."
+      },
+      {
+        title:"Aula 2.3 — Cobrança Automática via PDV com Cliente Selecionado",
+        theory:"Apresentação da boa prática operacional no PDV: alterar o cliente padrão antes da geração do pagamento para garantir a baixa e conciliação automática.",
+        intro:"Repare como a simples busca e seleção do cliente cadastrado altera todo o fluxo de inteligência financeira do pedido.",
+        video:"03.mp4"
+      },
+      {
+        title:"Aula 2.4 — Cobrança a partir do Contas a Receber",
+        theory:"Procedimento para lançar e cobrar um título financeiro diretamente no módulo de Contas a Receber usando a Conta Digital como Gateway.",
+        intro:"Acompanhe o caminho pelo menu Finanças > Contas a Receber, o preenchimento dos dados do título e a chamada da Maquininha no Celular.",
+        video:"04.mp4"
+      }
+    ],
+    part3:{
+      title:"3. Boas Práticas e Resolução de Problemas",
+      theory:"As cobranças avulsas no app Tap on Phone possuem limitação nativa e não podem ser associadas a pedidos posteriormente. Em cenários de instabilidade do sistema, caso o lojista faça cobranças avulsas para não perder vendas, deve estar ciente de que o ajuste contábil no ERP precisará ser manual.",
+      pdfNote:"Para detalhes completos sobre cenários sem integração e procedimentos de contorno, consulte o documento complementar",
+      pdfLinkText:"Maquininha no Celular (Tap on Phone) – Fluxos de Cobrança e Conciliação",
+      pdfUrl:"maquininha-celular-tap-on-phone-fluxos-cobranca-conciliacao.html"
+    }
+  },
+  quiz:[
+    {type:"single", q:"O que é necessário para que uma venda realizada na Maquininha no Celular seja conciliada automaticamente?", opts:["Realizar uma cobrança avulsa direta no aplicativo","Criar um Pedido de Venda ou Conta a Receber vinculando um cliente específico","Usar a funcionalidade de Pagamento Integrado de marketplaces","Solicitar liberação do suporte técnico"], correct:1, exp:"A conciliação automática depende do vínculo do pagamento a um pedido ou título financeiro com cliente identificado."},
+    {type:"tf", q:"Verdadeiro ou falso: Se o sistema passar por instabilidade, o lojista pode fazer uma cobrança avulsa e vinculá-la ao pedido no ERP mais tarde.", opts:["Verdadeiro","Falso"], correct:1, exp:"Falso. Cobranças avulsas não possuem opção de vínculo posterior no sistema."},
+    {type:"single", q:"Qual a principal diferença entre a Integração da Conta Digital e o Pagamento Integrado?", opts:["Não há diferença","O Pagamento Integrado é exclusivo para marketplaces e não se aplica à Conta Digital","A Conta Digital só funciona no PDV","O Pagamento Integrado é pago à parte"], correct:1, exp:"O Pagamento Integrado auxilia na conciliação de vendas vindas de marketplaces e não se aplica à Olist Conta Digital."},
+    {type:"situacao", q:"Um lojista relata que fez uma venda no PDV sem selecionar o cliente e a venda não conciliou. Qual a orientação correta?", opts:["Informar que esse é o comportamento padrão e orientá-lo a sempre selecionar o cliente para vendas futuras","Abrir chamado de erro sistêmico","Pedir para o cliente refazer o pagamento","Cancelar o cadastro do lojista"], correct:0, exp:"Vendas sem cliente (Consumidor Final) no PDV não realizam a conciliação automática por padrão do sistema."},
+    {type:"situacao", q:"Qual a principal diferença entre uma cobrança feita no PDV mantendo 'Consumidor Final' e uma cobrança feita no PDV com o cliente selecionado?", opts:["A cobrança com 'Consumidor Final' é mais lenta","A cobrança com 'Consumidor Final' é recusada pelo sistema","Apenas a cobrança com o cliente selecionado realiza a conciliação automática no sistema","Não há diferença técnica entre os dois fluxos"], correct:2, exp:"Sem a seleção de um cliente específico no PDV, o pagamento não é vinculado ao pedido e não ocorre a conciliação automática."},
+    {type:"single", q:"O que acontece quando uma cobrança é realizada com sucesso no PDV com o cliente corretamente selecionado?", opts:["A venda fica pendente de aprovação manual","A venda é conciliada automaticamente com o Pedido de Venda no ERP","O saldo é bloqueado por 30 dias","É gerado um boleto automático de compensação"], correct:1, exp:"Com o cliente corretamente vinculado no PDV, a venda é identificada e conciliada de forma automática pelo ERP."}
+  ]
+},
+{
+  id:"m8", code:"M8", title:"Crédito da Olist", level:"Intermediário", time:"25 min",
+  description:"Antecipação de recebíveis (boleto e cartão), requisitos de elegibilidade, simulação e contratação, custos, assinatura de documentos, segunda via de boleto e conciliação financeira.",
+  objectives:["Explicar o que é e o que pode ser antecipado no Crédito da Olist","Orientar sobre requisitos do lojista e das notas fiscais","Explicar o passo a passo de simulação e contratação","Explicar os custos da operação (TAC, IOF zero, sem Serasa)","Orientar sobre segunda via de boleto e conciliação financeira das antecipações"],
+  summary:"O Crédito da Olist é uma solução integrada ao ERP que transforma vendas a prazo — feitas por boleto (B2B) ou cartão de crédito (B2B e B2C) — em capital de giro imediato, com IOF zero e sem consulta ao Serasa. O lojista simula o valor desejado, o sistema seleciona automaticamente os recebíveis elegíveis, e após a contratação e assinatura digital dos documentos o dinheiro cai na conta bancária escolhida, podendo ser no mesmo dia. A funcionalidade é exclusiva para lojistas do ERP Olist com CNPJ ativo; MEIs e órgãos públicos não são elegíveis.",
+  keyPoints:[
+    "Pode ser antecipado: vendas no cartão de crédito (B2C ou B2B) e boletos, sendo que boletos só valem para vendas entre empresas (CNPJ/B2B).",
+    "IOF zero e sem consulta ao Serasa — diferenciais em relação ao crédito bancário tradicional.",
+    "Não existe taxa média fixa: o custo (incluindo a TAC — Taxa de Abertura de Crédito) varia por operação e é exibido de forma transparente na simulação.",
+    "Requisitos do lojista: CNPJ ativo e regular, documentos atualizados na plataforma e conta bancária vinculada à empresa.",
+    "Requisitos da nota fiscal: destinatário PJ, nota autorizada pela SEFAZ, parcelas de no mínimo R$ 100,00 e ao menos uma parcela com vencimento entre 9 e 150 dias.",
+    "A simulação é feita em Finanças > Crédito da Olist no ERP, e pode ser ajustada (adicionar/remover recebíveis) antes de contratar.",
+    "A assinatura dos documentos só pode ser feita de segunda a sexta, das 08h às 16h; fora desse horário, a assinatura fica para o próximo dia útil.",
+    "Após aprovado e assinado dentro da janela de operação, o valor pode ser depositado no mesmo dia.",
+    "MEIs e órgãos públicos não são elegíveis para liberação de crédito."
+  ],
+  flow:[
+    "No ERP, acessar Finanças > Crédito da Olist.",
+    "No simulador, informar o valor desejado e escolher as parcelas (vencimento mais próximo ou todos os meses).",
+    "Clicar em 'Exibir simulação' — o sistema analisa automaticamente os recebíveis elegíveis do lojista.",
+    "Revisar a simulação: conferir os recebíveis selecionados, adicionar ou remover parcelas e ver o detalhamento de custos e o 'Valor que você vai receber'.",
+    "Clicar em 'Iniciar contratação' e preencher os dados do sócio responsável (CPF, celular e e-mail).",
+    "Selecionar a conta bancária de destino (a Conta Digital Olist aparece como opção principal).",
+    "Conferir os dados da transferência e clicar em 'Finalizar contratação'.",
+    "Assinar os documentos digitalmente: escolher token por e-mail ou SMS, informar o código e confirmar (respeitando o horário seg-sex, 08h-16h).",
+    "O valor líquido cai na conta escolhida no prazo informado, podendo ser no mesmo dia."
+  ],
+  whenUse:["Lojista com CNPJ ativo e regular precisa de capital de giro rápido, sem burocracia bancária e sem IOF.","Lojista quer antecipar vendas parceladas no cartão de crédito (B2C ou B2B) para ter caixa imediato.","Lojista quer antecipar boletos emitidos para outras empresas (venda B2B) antes do vencimento.","Lojista precisa pagar fornecedores ou despesas urgentes usando vendas já realizadas como base."],
+  whenNot:["Lojista é MEI ou órgão público — não são elegíveis para o Crédito da Olist.","Lojista busca empréstimo pessoal, sem relação com vendas já realizadas na plataforma.","Venda para CPF paga por boleto — só é possível antecipar vendas para CPF quando o pagamento foi no cartão de crédito.","Nota fiscal não autorizada pela SEFAZ, emitida para MEI/órgão público, ou com parcelas abaixo de R$ 100,00."],
+  commonErrors:["Confundir antecipação de recebíveis com empréstimo bancário tradicional.","Achar que existe uma taxa média fixa — o custo (TAC + demais custos) varia conforme a operação.","Não conferir se a nota fiscal está autorizada na SEFAZ e emitida para um CNPJ antes de tentar antecipar.","Tentar antecipar boleto de venda feita para CPF (só é permitido via cartão de crédito nesse caso).","Não avisar o lojista sobre a janela de assinatura (dias úteis, das 08h às 16h), fazendo-o achar que perdeu a operação quando na verdade ela só é concluída no próximo dia útil."],
+  tips:["Oriente o lojista a simular livremente em Finanças > Crédito da Olist — a simulação não gera compromisso até a contratação.","Reforce que o 'Valor que você vai receber' já é o valor líquido, descontado o custo total (TAC e demais custos), sem IOF e sem consulta ao Serasa.","Avise sobre o horário de assinatura (seg-sex, 08h-16h) para o lojista não perder a chance de receber no mesmo dia.","Lembre que boleto só pode ser antecipado em vendas B2B (CNPJ); para CPF, o meio de pagamento precisa ser cartão de crédito."],
+  examples:[
+    {t:"Lojista precisa pagar fornecedor hoje mas só tem saldo a receber em 30 dias", d:"Apresente o Crédito da Olist e oriente a simulação em Finanças > Crédito da Olist, mostrando o valor líquido e o prazo de liquidação."},
+    {t:"Cliente pergunta qual a taxa de antecipação", d:"Explique que não há taxa média fixa: o custo (incluindo a TAC) varia por operação e é detalhado na tela de simulação, sem IOF e sem consulta ao Serasa."},
+    {t:"Lojista perdeu o boleto de uma parcela já antecipada", d:"Oriente-o a ir em Finanças > Crédito da Olist > Minhas antecipações > baixar boletos emitidos pela Flip by Olist > aba Recebíveis antecipados > opção 'Segunda via do boleto emitido pela Flip by Olist'."},
+    {t:"Lojista quer cancelar em lote todas as contas a receber vinculadas a uma antecipação", d:"Explique a conciliação financeira das antecipações: ela cancela as contas a receber vinculadas e gera automaticamente o arquivo de remessa bancária para cancelamento dos boletos."}
+  ],
+  faq:[
+    {q:"Quem pode solicitar a antecipação de recebíveis?", a:"Lojistas do ERP Olist com CNPJ ativo e regular, documentos atualizados na plataforma e conta bancária da empresa vinculada. MEIs e órgãos públicos não são elegíveis."},
+    {q:"Onde cai o dinheiro antecipado?", a:"Na conta bancária escolhida durante a contratação; a Conta Digital Olist é oferecida como opção principal."},
+    {q:"Quais são os custos da antecipação?", a:"Não há taxa média fixa — o custo (incluindo a TAC, Taxa de Abertura de Crédito) varia conforme a operação e é detalhado na tela de simulação, sem cobrança de IOF e sem consulta ao Serasa."},
+    {q:"É possível antecipar um boleto emitido para pessoa física (CPF)?", a:"Não. Boletos só podem ser antecipados em vendas B2B (para CNPJ). Vendas para CPF só entram na antecipação quando pagas no cartão de crédito."},
+    {q:"Como emitir a segunda via de um boleto de antecipação?", a:"No ERP, acesse Finanças > Crédito da Olist > Minhas antecipações, clique na operação desejada, depois em 'baixar boletos emitidos pela Flip by Olist', vá até a aba Recebíveis antecipados e selecione 'Segunda via do boleto emitido pela Flip by Olist' na parcela desejada."},
+    {q:"O que é a conciliação financeira das antecipações?", a:"É uma funcionalidade que permite cancelar em lote todas as contas a receber do ERP vinculadas a uma antecipação e gerar automaticamente o arquivo de remessa bancária para cancelamento dos boletos correspondentes."}
+  ],
+  checklist:["Sei explicar o que pode ser antecipado (cartão B2C/B2B e boleto exclusivo B2B)","Sei os requisitos do lojista (CNPJ ativo, documentos atualizados, conta vinculada) e da nota fiscal (PJ, autorizada, parcela mínima de R$100, vencimento entre 9 e 150 dias)","Sei orientar a simulação e o ajuste de recebíveis em Finanças > Crédito da Olist","Sei explicar os custos da operação (TAC, IOF zero, sem Serasa) e onde consultá-los na simulação","Sei orientar o fluxo completo de contratação e assinatura de documentos (incluindo o horário seg-sex, 08h-16h)","Sei orientar a emissão de segunda via de boleto e explicar a conciliação financeira das antecipações"],
+  articles:[
+    {t:"Como funciona a antecipação de recebíveis no Crédito da Olist", u:"https://ajuda.olist.com/antecipacao-de-recebiveis/como-funciona-a-antecipacao-de-recebiveis-no-credito-da-olist"},
+    {t:"Quais são os custos da antecipação de recebíveis", u:"https://ajuda.olist.com/antecipacao-de-recebiveis/quais-sao-os-custos-da-antecipacao-de-recebiveis"},
+    {t:"Como simular e contratar a antecipação de recebíveis", u:"https://ajuda.olist.com/simulacao-e-contratacao/como-simular-e-contratar-a-antecipacao-de-recebiveis"},
+    {t:"Segunda via de boleto de antecipação", u:"https://ajuda.olist.com/custos-e-condicoes/segunda-via-de-boleto-de-antecipacao"},
+    {t:"Conciliação financeira das antecipações", u:"https://ajuda.olist.com/custos-e-condicoes/conciliacao-financeira-das-antecipacoes"}
+  ],
+  quiz:[
+    {type:"single", q:"O que pode ser antecipado no Crédito da Olist?", opts:["Apenas boletos emitidos para pessoa física","Vendas no cartão de crédito (B2C e B2B) e boletos exclusivamente em vendas B2B","Somente vendas via Pix","Empréstimos pessoais do lojista"], correct:1, exp:"O cartão de crédito pode ser antecipado tanto em vendas B2C quanto B2B; já o boleto só é elegível em vendas entre empresas (B2B)."},
+    {type:"tf", q:"Verdadeiro ou falso: qualquer lojista, incluindo MEI e órgãos públicos, pode contratar o Crédito da Olist.", opts:["Verdadeiro","Falso"], correct:1, exp:"Falso. MEIs e órgãos públicos não são elegíveis como destinatários para liberação de crédito."},
+    {type:"single", q:"Quais requisitos a nota fiscal precisa atender para ser elegível à antecipação?", opts:["Ser emitida para CPF e estar pendente na SEFAZ","Ser emitida para PJ, estar autorizada pela SEFAZ, com parcelas de no mínimo R$100 e vencimento entre 9 e 150 dias","Ter valor total acima de R$10.000","Não ter nenhuma parcela registrada"], correct:1, exp:"A nota precisa ser para Pessoa Jurídica, estar autorizada pela SEFAZ, ter parcelas de ao menos R$100 e pelo menos uma parcela vencendo entre 9 e 150 dias."},
+    {type:"situacao", q:"Lojista pergunta qual a taxa cobrada na antecipação. O que você responde?", opts:["Existe uma taxa fixa de 2% ao mês para todos os clientes","Não há taxa média fixa: o custo, incluindo a TAC, varia por operação e é exibido na simulação, sem IOF e sem consulta ao Serasa","A taxa só é informada após a contratação","O custo é sempre igual ao de um empréstimo bancário comum"], correct:1, exp:"O custo da antecipação varia conforme a operação e é detalhado de forma transparente na tela de simulação, sem cobrança de IOF nem consulta ao Serasa."},
+    {type:"situacao", q:"Lojista fez a contratação e assinou os documentos às 18h de uma quarta-feira. O que você orienta?", opts:["Que o valor cairá em instantes, sem restrição de horário","Que a assinatura de documentos só pode ocorrer de segunda a sexta, das 08h às 16h, então a assinatura será processada no próximo dia útil","Que a operação foi cancelada automaticamente","Que ele precisa refazer toda a simulação"], correct:1, exp:"A assinatura dos documentos é possível apenas em dias úteis, das 08h às 16h; fora desse período, é assinada no próximo dia útil."},
+    {type:"single", q:"Como o lojista pode emitir a segunda via de um boleto de antecipação já contratado?", opts:["Solicitando por e-mail ao suporte e aguardando 5 dias úteis","Em Finanças > Crédito da Olist > Minhas antecipações, baixando os boletos da Flip by Olist e usando a opção de segunda via na aba Recebíveis antecipados","Não é possível emitir segunda via de boletos de antecipação","Apenas ligando para a central bancária"], correct:1, exp:"O caminho é: Finanças > Crédito da Olist > Minhas antecipações > baixar boletos emitidos pela Flip by Olist > aba Recebíveis antecipados > Segunda via do boleto."}
+  ]
+},
+{
+  id:"m9", code:"M9", title:"Cartões e Antifraude", level:"Intermediário", time:"20 min",
+  description:"Reprovações, cancelamento de cobranças, chargeback e antecipação pontual de recebíveis no cartão.",
+  objectives:["Explicar reprovações de cobrança","Cancelar uma cobrança via cartão","Orientar sobre chargeback","Explicar a antecipação pontual"],
+  summary:"Quando o pagamento é no cartão, o antifraude entra em ação para proteger o lojista de fraudes — mas isso não elimina 100% o risco de chargeback, que é quando o titular do cartão contesta a cobrança. É papel do analista ajudar o lojista a entender por que uma cobrança foi reprovada, como cancelar quando necessário e como funciona a antecipação pontual, quando o lojista quer o dinheiro de uma venda parcelada antes do prazo normal.",
+  keyPoints:[
+    "O antifraude reduz o risco, mas não elimina totalmente a possibilidade de chargeback.",
+    "É possível consultar o motivo da reprovação de uma cobrança.",
+    "Cobranças no cartão podem ser canceladas quando necessário.",
+    "Existe a opção de antecipação pontual de recebíveis."
+  ],
+  flow:[
+    "O cliente tenta pagar com cartão e a cobrança passa pelo antifraude.",
+    "Se aprovada, a venda segue normalmente; se reprovada, é possível consultar o motivo.",
+    "Se preciso, o lojista pode cancelar a cobrança.",
+    "Para adiantar o recebimento de valores parcelados, o lojista solicita a antecipação pontual."
+  ],
+  whenUse:["Cobrança no cartão foi reprovada sem explicação para o lojista.","Lojista quer cancelar uma venda feita no cartão.","Lojista precisa do dinheiro de uma venda parcelada antes do prazo."],
+  whenNot:["Reembolso de venda por Pix ou boleto (ver módulos específicos)."],
+  commonErrors:["Achar que o antifraude elimina 100% o risco de chargeback.","Não verificar o motivo da reprovação antes de orientar uma nova tentativa.","Confundir cancelamento de cobrança com estorno de link de pagamento."],
+  tips:["Sempre oriente o lojista a consultar o motivo da reprovação antes de tentar cobrar novamente.","Explique com calma que chargeback é uma contestação do titular do cartão, não um erro do sistema."],
+  examples:[
+    {t:"Lojista teve uma venda contestada pelo cliente do cartão", d:"Explique que isso é um chargeback e que o antifraude ajuda a reduzir, mas não elimina esse risco."},
+    {t:"Lojista quer receber antes o valor de uma venda parcelada", d:"Oriente sobre a antecipação pontual de recebíveis."}
+  ],
+  faq:[
+    {q:"O antifraude garante que nunca vai ter chargeback?", a:"Não. O antifraude ajuda a reduzir o risco, mas não previne o chargeback por completo."},
+    {q:"Dá pra saber por que uma cobrança foi reprovada?", a:"Sim, existe um caminho para consultar o motivo da reprovação de uma cobrança no cartão."}
+  ],
+  checklist:["Sei explicar o motivo de uma reprovação","Sei orientar o cancelamento de cobrança","Sei explicar chargeback de forma simples","Sei explicar a antecipação pontual"],
+  articles:[
+    {t:"O antifraude previne o chargeback?", u:"https://ajuda.olist.com/cartao/o-antifraude-previne-o-chargeback"},
+    {t:"Como descobrir o motivo da reprovação da minha cobrança?", u:"https://ajuda.olist.com/cartao/como-descobrir-o-motivo-da-reprovacao-da-minha-cobranca-"},
+    {t:"Como cancelar uma cobrança via cartão", u:"https://ajuda.olist.com/cartao/como-cancelar-uma-cobranca-via-cartao"},
+    {t:"Como solicitar a antecipação pontual de recebíveis", u:"https://ajuda.olist.com/cartao/como-solicitar-a-antecipacao-pontual-de-recebiveis"}
+  ],
+  quiz:[
+    {type:"tf", q:"Verdadeiro ou falso: o antifraude elimina totalmente o risco de chargeback.", opts:["Verdadeiro","Falso"], correct:1, exp:"O antifraude reduz o risco, mas não previne o chargeback por completo."},
+    {type:"single", q:"Uma cobrança no cartão foi reprovada. Qual o primeiro passo recomendado?", opts:["Tentar de novo sem verificar nada","Consultar o motivo da reprovação","Cancelar a conta do lojista","Orientar troca imediata de bandeira"], correct:1, exp:"O ideal é sempre entender o motivo da reprovação antes de qualquer nova tentativa."},
+    {type:"situacao", q:"Lojista fez uma venda parcelada e quer o valor total antes do prazo normal. O que você orienta?", opts:["Isso não é possível de forma alguma","Explicar a antecipação pontual de recebíveis","Cancelar a venda e refazer à vista","Pedir para o cliente pagar via Pix em vez de cartão"], correct:1, exp:"A antecipação pontual de recebíveis existe exatamente para esse tipo de necessidade."}
+  ]
+},
+{
+  id:"m10", code:"M10", title:"Pagamentos e Conciliação Financeira", level:"Intermediário", time:"25 min",
+  description:"Buscador de boletos (DDA), conciliação com o ERP, agenda de recebíveis e régua de cobrança.",
+  objectives:["Explicar o Buscador de Boletos (DDA)","Explicar a conciliação com o ERP","Orientar sobre agenda de recebíveis e régua de cobrança"],
+  summary:"Esse módulo é sobre organizar a vida financeira do lojista: em vez de ele caçar boletos de fornecedores manualmente, o Buscador de Boletos (DDA) traz tudo automaticamente para o CNPJ dele. Depois, a conciliação com o ERP conecta o que aconteceu na Conta Digital com os lançamentos financeiros do sistema, e a régua de cobrança automatiza lembretes para quem está devendo.",
+  keyPoints:[
+    "O Buscador de Boletos (DDA) precisa ser ativado para funcionar.",
+    "Ao ativar o DDA, ele traz os boletos vinculados ao CNPJ do lojista.",
+    "É possível automatizar o lançamento de contas a pagar e a receber.",
+    "A régua de cobrança tem uma tarifa por cobrança ativa (R$ 2,00 por cobrança com régua ativa).",
+    "Existe uma agenda de recebíveis para acompanhar valores a receber."
+  ],
+  flow:[
+    "O lojista ativa o Buscador de Boletos (DDA) na Conta Digital.",
+    "Os boletos do CNPJ passam a aparecer automaticamente para pagamento.",
+    "As transações são conciliadas com os lançamentos do ERP.",
+    "O lojista acompanha a agenda de recebíveis e pode ativar a régua de cobrança para lembrar clientes inadimplentes."
+  ],
+  whenUse:["Lojista quer parar de digitar boletos manualmente.","Dúvida sobre por que um boleto pago não apareceu no ERP.","Lojista quer automatizar cobrança de clientes atrasados."],
+  whenNot:["Emissão de boleto de venda (ver módulo Boletos)."],
+  commonErrors:["Achar que o DDA funciona sem ativação prévia.","Não checar se a régua de cobrança está ativa ao explicar a tarifa de R$2,00 por cobrança.","Confundir conciliação com o ERP com extrato simples (são conceitos diferentes)."],
+  tips:["Sempre confirme se o DDA foi ativado antes de investigar por que um boleto não apareceu.","Ao falar de régua de cobrança, deixe claro que a tarifa é por cobrança com a régua ativa."],
+  examples:[
+    {t:"Lojista reclama que precisa digitar boleto por boleto", d:"Apresente o Buscador de Boletos (DDA), que traz os boletos automaticamente após ativado."},
+    {t:"Lojista quer lembrar clientes inadimplentes automaticamente", d:"Oriente sobre a régua de cobrança, que tem tarifa de R$2,00 por cobrança ativa."}
+  ],
+  faq:[
+    {q:"O DDA traz todos os boletos do CNPJ automaticamente?", a:"Depois de ativado, o Buscador de Boletos (DDA) associa os boletos vinculados ao CNPJ do lojista."},
+    {q:"A régua de cobrança tem custo?", a:"Sim, R$ 2,00 por cobrança com a régua ativa."}
+  ],
+  checklist:["Sei explicar o que é o Buscador de Boletos (DDA)","Sei explicar a conciliação com o ERP","Sei explicar a régua de cobrança e sua tarifa","Sei explicar a agenda de recebíveis"],
+  articles:[
+    {t:"Como configurar retorno bancário?", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/como-configurar-retorno-bancario"},
+    {t:"Como ativar o buscador de boletos", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/como-ativar-o-buscador-de-boletos"},
+    {t:"Como funciona o buscador de boletos (DDA)", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/como-funciona-o-buscador-de-boletos-dda"},
+    {t:"O buscador de boletos associa o boleto à Nota Fiscal?", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/o-buscador-de-boletos-associa-o-boleto-a-nota-fiscal"},
+    {t:"O que é Buscador de Boletos (DDA)?", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/o-que-e-buscador-de-boletos-dda"},
+    {t:"Ao ativar o DDA, ele puxará todos os boletos no meu CNPJ?", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/ao-ativar-o-dda-ele-puxara-todos-os-boletos-no-meu-cnpj-"},
+    {t:"Como automatizar o lançamento de contas a pagar e receber?", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/como-automatizar-o-lancamento-de-contas-a-pagar-e-receber-"},
+    {t:"Conta Digital como padrão para recebimento de valores", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/conta-digital-como-padrao-para-recebimento-de-valores"},
+    {t:"Conciliação com o ERP", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/conciliacao-com-o-erp"},
+    {t:"O que é agenda de recebíveis", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/o-que-e-agenda-de-recebiveis-"},
+    {t:"Régua de cobrança", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/regua-de-cobranca"},
+    {t:"Como agendar pagamento", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/como-agendar-pagamento"},
+    {t:"Como conciliar contas a pagar com o buscador de boletos", u:"https://ajuda.olist.com/conta-digital/como-conciliar-contas-a-pagar-com-o-buscador-de-boletos"},
+    {t:"Como visualizar transações de Pix e Boleto no ERP", u:"https://ajuda.olist.com/recebimentos-e-conciliacao-financeira/como-visualizar-transacoes-de-pix-e-boleto-no-erp"}
+  ],
+  quiz:[
+    {type:"single", q:"O que é o Buscador de Boletos (DDA)?", opts:["Um recurso que traz automaticamente os boletos vinculados ao CNPJ, após ativado","Um app separado para pagar contas de luz","Uma forma de emitir boleto de venda","Um relatório de vendas"], correct:0, exp:"É o recurso que centraliza os boletos do CNPJ do lojista, depois de ativado."},
+    {type:"tf", q:"Verdadeiro ou falso: o DDA funciona automaticamente, sem precisar ser ativado.", opts:["Verdadeiro","Falso"], correct:1, exp:"É necessário ativar o Buscador de Boletos para que ele passe a funcionar."},
+    {type:"single", q:"Qual a tarifa da régua de cobrança?", opts:["É sempre gratuita","R$ 2,00 por cobrança com a régua ativa","10% do valor da cobrança","R$ 20,00 por mês fixo"], correct:1, exp:"A régua de cobrança tem tarifa de R$ 2,00 por cobrança com a régua ativa."},
+    {type:"situacao", q:"Lojista reclama que paga vários boletos de fornecedores manualmente todo mês. O que você sugere?", opts:["Ativar o Buscador de Boletos (DDA)","Cancelar a Conta Digital","Trocar de ERP","Pagar tudo em dinheiro"], correct:0, exp:"O DDA foi feito justamente para reunir os boletos do CNPJ automaticamente."}
+  ]
+},
+{
+  id:"m11", code:"M11", title:"Carteira", level:"Intermediário", time:"15 min",
+  description:"Gerenciar cartões de crédito cadastrados e pagar boletos ou Pix usando cartão de crédito.",
+  objectives:["Gerenciar cartões cadastrados","Pagar boletos e Pix com cartão de crédito"],
+  summary:"A Carteira é onde o lojista guarda e gerencia os cartões de crédito vinculados à Conta Digital. Além de organizar os cartões cadastrados, ela permite usar o cartão de crédito para pagar boletos e Pix — útil quando o lojista quer parcelar uma saída de caixa em vez de pagar à vista pelo saldo da conta.",
+  keyPoints:[
+    "É possível gerenciar (adicionar, visualizar) os cartões de crédito cadastrados.",
+    "Boletos e Pix podem ser pagos usando cartão de crédito.",
+    "O parcelamento de contas no cartão tem uma taxa mensal específica (4,99% ao mês contratado)."
+  ],
+  flow:[
+    "O lojista cadastra um cartão de crédito na Carteira.",
+    "Ao pagar um boleto ou Pix, escolhe a opção de pagar com cartão de crédito.",
+    "Define o parcelamento, se aplicável.",
+    "O valor é debitado do cartão, conforme a taxa de parcelamento contratada."
+  ],
+  whenUse:["Lojista quer parcelar o pagamento de uma conta em vez de usar o saldo.","Dúvida sobre como gerenciar cartões cadastrados."],
+  whenNot:["Recebimento de vendas no cartão do cliente (ver módulo Cartões e Antifraude)."],
+  commonErrors:["Confundir Carteira (cartões do próprio lojista para pagar contas) com recebimento de vendas no cartão do cliente.","Não informar a taxa de parcelamento ao orientar o pagamento parcelado."],
+  tips:["Deixe claro que a Carteira é sobre o lojista pagando com cartão, não recebendo.","Sempre informe a taxa de parcelamento antes de o lojista confirmar."],
+  examples:[
+    {t:"Lojista quer parcelar o pagamento de um boleto de fornecedor", d:"Oriente o pagamento do boleto usando cartão de crédito cadastrado na Carteira, informando a taxa de parcelamento."}
+  ],
+  faq:[
+    {q:"Dá para pagar Pix com cartão de crédito?", a:"Sim, a Carteira permite pagar boletos e Pix usando cartão de crédito."},
+    {q:"Qual a taxa do parcelamento no cartão?", a:"O parcelamento de boleto ou Pix no cartão de crédito tem taxa de 4,99% ao mês contratado."}
+  ],
+  checklist:["Sei explicar o gerenciamento de cartões","Sei explicar o pagamento de boleto/Pix no cartão","Sei informar a taxa de parcelamento"],
+  articles:[
+    {t:"Como gerenciar seus cartões de crédito", u:"https://ajuda.olist.com/carteira/como-gerenciar-seus-cartoes-de-credito"},
+    {t:"Como pagar boletos e Pix com cartão de crédito", u:"https://ajuda.olist.com/carteira/como-pagar-boletos-e-pix-com-cartao-de-credito"}
+  ],
+  quiz:[
+    {type:"single", q:"Para que serve a Carteira dentro da Conta Digital?", opts:["Para receber vendas dos clientes no cartão","Para gerenciar cartões de crédito do lojista e pagar boletos/Pix com eles","Para emitir notas fiscais","Para consultar o extrato apenas"], correct:1, exp:"A Carteira é onde o lojista gerencia seus próprios cartões e usa esse crédito para pagar contas."},
+    {type:"tf", q:"Verdadeiro ou falso: o parcelamento de boleto no cartão de crédito é gratuito.", opts:["Verdadeiro","Falso"], correct:1, exp:"Existe uma taxa de 4,99% ao mês contratado para esse tipo de parcelamento."},
+    {type:"situacao", q:"Lojista quer pagar um Pix de fornecedor parcelado, sem usar o saldo da conta. O que você orienta?", opts:["Não é possível pagar Pix com cartão","Usar o cartão de crédito cadastrado na Carteira, informando a taxa de parcelamento","Pedir empréstimo ao banco","Cancelar o pagamento"], correct:1, exp:"A Carteira permite pagar Pix com cartão de crédito, respeitando a taxa de parcelamento vigente."}
+  ]
+},
+{
+  id:"m12", code:"M12", title:"Configurações e Tarifas da Conta", level:"Intermediário", time:"25 min",
+  description:"Forma de pagamento/recebimento padrão, edição/cancelamento de cobranças, limites, cancelamento da conta e tabela de tarifas.",
+  objectives:["Configurar forma de pagamento/recebimento padrão","Editar ou cancelar uma cobrança","Explicar limites da conta","Orientar cancelamento e reativação","Explicar a tabela de tarifas"],
+  summary:"Esse é o módulo das configurações que moldam como a conta se comporta no dia a dia: qual é a forma padrão de pagar e receber, como editar ou cancelar uma cobrança que já foi criada, quais são os limites da conta e o que fazer se o lojista quiser cancelar (ou reativar) a Conta Digital. Ele também reúne a tabela oficial de tarifas — a principal referência quando o lojista pergunta 'quanto eu pago para usar isso?'.",
+  keyPoints:[
+    "O lojista pode escolher uma forma de pagamento e recebimento padrão.",
+    "Cobranças já criadas podem ser editadas ou canceladas.",
+    "A conta tem limites de operação, que podem impactar transferências e pagamentos.",
+    "É possível cancelar e, depois, reativar a Conta Digital.",
+    "As tarifas variam por operação (Pix, boleto, link, maquininha, régua, TED, parcelamento) e por plano contratado (Avance, Construa, Impulsione, Domine)."
+  ],
+  flow:[
+    "O lojista acessa as configurações da conta no Internet Banking.",
+    "Define a forma de pagamento/recebimento padrão.",
+    "Quando necessário, edita ou cancela uma cobrança específica.",
+    "Consulta os limites vigentes da conta antes de operações grandes.",
+    "Se decidir encerrar, segue o fluxo de cancelamento — que pode ser revertido depois com a reativação."
+  ],
+  whenUse:["Lojista quer mudar a forma de recebimento padrão.","Cobrança criada por engano precisa ser editada ou cancelada.","Lojista pergunta sobre limites de valor.","Lojista quer cancelar (ou reativar) a conta.","Dúvida sobre quanto custa usar Pix, boleto, link, maquininha etc."],
+  whenNot:["Dúvidas específicas de como emitir Pix ou boleto (ver módulos dedicados)."],
+  commonErrors:["Informar uma tarifa de cabeça sem checar o plano do lojista — os valores mudam por plano (Avance, Construa, Impulsione, Domine).","Confundir cancelamento de cobrança com cancelamento da conta inteira.","Não avisar que a reativação é possível após um cancelamento."],
+  tips:["Sempre pergunte qual plano do ERP o lojista tem antes de informar valores de tarifa.","Ao tratar de cancelamento de conta, confirme se é a cobrança ou a conta inteira que o lojista quer cancelar.","Tenha a tabela de tarifas sempre à mão — os valores mudam por operação e por plano."],
+  examples:[
+    {t:"Lojista pergunta quanto custa receber um boleto no plano Construa", d:"Consulte a tabela: no plano Construa, receber pagamento via boleto custa R$ 1,95 (a emissão em si é gratuita)."},
+    {t:"Lojista criou uma cobrança errada", d:"Oriente a editar ou cancelar a cobrança, conforme o caso, sem precisar mexer nos limites ou no cadastro da conta."},
+    {t:"Lojista quer voltar atrás depois de cancelar a conta", d:"Explique que a reativação da Conta Digital é possível."}
+  ],
+  faq:[
+    {q:"As tarifas são iguais para todos os planos do ERP?", a:"Não. Elas variam conforme o plano contratado (Avance, Construa, Impulsione ou Domine) e o tipo de operação."},
+    {q:"Cancelar a conta é definitivo?", a:"Não necessariamente — existe um fluxo de cancelamento e reativação da Conta Digital."},
+    {q:"Existe tarifa para receber TED?", a:"Não é cobrada tarifa por TED recebido; hoje ainda não é possível fazer pagamento por TED pela Conta Digital."}
+  ],
+  checklist:["Sei configurar forma de pagamento/recebimento padrão","Sei editar/cancelar uma cobrança","Sei explicar limites da conta","Sei orientar cancelamento/reativação","Sei consultar a tabela de tarifas por plano"],
+  articles:[
+    {t:"Como selecionar forma de pagamento e recebimento padrão?", u:"https://ajuda.olist.com/configuracoes-da-conta/como-selecionar-forma-de-pagamento-e-recebimento-padrao"},
+    {t:"Como editar e cancelar uma cobrança", u:"https://ajuda.olist.com/configuracoes-da-conta/como-editar-e-cancelar-uma-cobranca"},
+    {t:"Limites da conta", u:"https://ajuda.olist.com/configuracoes-da-conta/limites-da-conta"},
+    {t:"Cancelamento e reativação da Conta Digital", u:"https://ajuda.olist.com/configuracoes-da-conta/cancelamento-e-reativacao-da-conta-digital"},
+    {t:"Tarifas cobradas (tabela completa por plano)", u:"https://ajuda.olist.com/conta-digital/tarifas-cobradas"}
+  ],
+  quiz:[
+    {type:"single", q:"No plano Construa, quanto custa RECEBER um pagamento via boleto?", opts:["R$ 0,00","R$ 1,95","R$ 2,50","30 boletos grátis e depois R$1,59"], correct:1, exp:"No plano Construa, receber pagamento via boleto custa R$ 1,95, segundo a tabela de tarifas."},
+    {type:"tf", q:"Verdadeiro ou falso: a Conta Digital cobra tarifa por TED recebido.", opts:["Verdadeiro","Falso"], correct:1, exp:"Não é cobrada tarifa por TED recebido; e ainda não é possível pagar por TED pela conta."},
+    {type:"single", q:"Qual a taxa de parcelamento de boleto ou Pix no cartão de crédito?", opts:["1,99% ao mês","4,99% ao mês contratado","10% ao mês","Não há parcelamento disponível"], correct:1, exp:"O parcelamento de boleto ou Pix no cartão de crédito tem taxa de 4,99% ao mês contratado."},
+    {type:"situacao", q:"Lojista quer cancelar a Conta Digital, mas depois se arrepende. O que você orienta?", opts:["Não é possível voltar atrás em hipótese alguma","Existe um fluxo de reativação da Conta Digital","Ele precisa abrir outro CNPJ","Precisa esperar 5 anos"], correct:1, exp:"Depois do cancelamento, é possível seguir o fluxo de reativação da Conta Digital."},
+    {type:"tf", q:"Verdadeiro ou falso: as tarifas de Pix, boleto e maquininha são as mesmas para todos os planos do ERP.", opts:["Verdadeiro","Falso"], correct:1, exp:"As tarifas variam conforme o plano contratado: Avance, Construa, Impulsione ou Domine."}
+  ]
+},
+
+/* ===== NÍVEL AVANÇADO ===== */
+{
+  id:"m13", code:"M13", title:"Segurança e Autorizações", level:"Avançado", time:"20 min",
+  description:"Código de autorização, quando usá-lo, e como identificar sinais de fraude.",
+  objectives:["Explicar o código de autorização","Orientar quando ele é exigido","Reconhecer sinais de possível fraude"],
+  summary:"Pense no código de autorização como uma segunda trava de segurança: mesmo que alguém tenha acesso ao computador ou celular do lojista, ainda precisa desse código (enviado por e-mail ou SMS) para confirmar ações sensíveis, como liberar permissões ou remover acessos. Além disso, o analista precisa estar atento a sinais de comportamento fraudulento nas negociações, para orientar o lojista a se proteger.",
+  keyPoints:[
+    "O código de autorização é enviado por e-mail ou SMS, conforme a preferência do usuário.",
+    "Ele é usado para confirmar ações sensíveis, como liberar ou remover permissões de acesso.",
+    "Urgência excessiva, dados inconsistentes e pedidos de mudança de conta são sinais de possível fraude.",
+    "Diante de qualquer sinal suspeito, o ideal é confirmar os dados com mais cuidado antes de prosseguir."
+  ],
+  flow:[
+    "O usuário realiza uma ação sensível (ex: liberar permissão de outro colaborador).",
+    "O sistema envia o código de autorização por e-mail ou SMS.",
+    "O usuário digita o código de 6 dígitos para confirmar a ação.",
+    "Sem o código correto, a ação não é concluída — reforçando a segurança."
+  ],
+  whenUse:["Lojista não recebeu o código de autorização.","Dúvida sobre quando o código é solicitado.","Suspeita de fraude em uma negociação com cliente."],
+  whenNot:["Dúvidas de acesso comum ao internet banking, sem envolver ação sensível (ver módulo Primeiros Passos)."],
+  commonErrors:["Achar que o código de autorização é usado em qualquer login — ele é para ações sensíveis específicas.","Ignorar sinais de urgência excessiva ou dados inconsistentes como possíveis fraudes.","Não orientar o lojista a desconfiar de pedidos para mudar dados de recebimento no meio da negociação."],
+  tips:["Sempre reforce: o código de autorização tem 6 dígitos e chega por e-mail ou SMS.","Ensine o lojista a desconfiar de pressa excessiva do comprador para fechar negócio.","Nunca compartilhe o código de autorização com terceiros — nem mesmo com o suporte."],
+  examples:[
+    {t:"Lojista quer remover o acesso de um colaborador", d:"Explique que, ao confirmar a remoção, ele receberá um código de autorização por e-mail ou SMS para validar a ação."},
+    {t:"Comprador insiste para enviar o produto antes da confirmação do pagamento", d:"Esse é um sinal de alerta de possível fraude — oriente o lojista a não seguir com a venda nessas condições."}
+  ],
+  faq:[
+    {q:"O código de autorização serve para logar na conta?", a:"Não necessariamente — ele confirma ações sensíveis específicas, como liberar ou remover permissões."},
+    {q:"Quais são sinais de possível fraude numa negociação?", a:"Urgência excessiva, dados inconsistentes, pedido de pagamento em nome de terceiros e solicitação de envio antes da confirmação do pagamento, entre outros."}
+  ],
+  checklist:["Sei explicar o que é o código de autorização","Sei explicar quando ele é solicitado","Sei listar sinais de possível fraude","Sei orientar o lojista a se proteger"],
+  articles:[
+    {t:"Como identificar possíveis sinais de fraude", u:"https://ajuda.olist.com/seguranca-e-autorizacoes/como-identificar-possiveis-sinais-de-fraude"},
+    {t:"Como gerar o código de autorização", u:"https://ajuda.olist.com/seguranca-e-autorizacoes/como-gerar-o-codigo-de-autorizacao"},
+    {t:"O que é o código de autorização", u:"https://ajuda.olist.com/seguranca-e-autorizacoes/o-que-e-o-codigo-de-autorizacao"},
+    {t:"Quando devo usar o código de autorização", u:"https://ajuda.olist.com/seguranca-e-autorizacoes/quando-devo-usar-o-codigo-de-autorizacao"},
+    {t:"Permissões e ações (fluxo completo com código de autorização)", u:"https://ajuda.olist.com/conta-digital/permissoes-e-acoes"}
+  ],
+  quiz:[
+    {type:"single", q:"Como o lojista recebe o código de autorização?", opts:["Por carta impressa","Por e-mail ou SMS, conforme preferência","Só presencialmente em agência","Por chamada de vídeo"], correct:1, exp:"O código de autorização é enviado por e-mail ou SMS, conforme a preferência do usuário."},
+    {type:"tf", q:"Verdadeiro ou falso: pedir para enviar o produto antes da confirmação do pagamento é um sinal de alerta de possível fraude.", opts:["Verdadeiro","Falso"], correct:0, exp:"Sim, esse é um dos sinais listados de comportamento potencialmente fraudulento."},
+    {type:"situacao", q:"Um comprador oferece pagar mais que o valor combinado e pede para transferir o excedente para outra conta. O que isso indica?", opts:["Um cliente generoso, sem risco","Um possível sinal de fraude","Um erro do sistema antifraude","Isso é sempre seguro"], correct:1, exp:"Pedir para repassar um valor extra para outra conta é um sinal clássico de fraude — o lojista deve desconfiar."},
+    {type:"tf", q:"Verdadeiro ou falso: o código de autorização deve ser compartilhado com o suporte se solicitado por telefone.", opts:["Verdadeiro","Falso"], correct:1, exp:"O código de autorização nunca deve ser compartilhado com terceiros, nem mesmo alegando ser do suporte."}
+  ]
+},
+{
+  id:"m14", code:"M14", title:"GNRE e Guias de Pagamento", level:"Avançado", time:"25 min",
+  description:"Pagamento de guias GNRE pela Conta Digital, tarifas, solução de problemas comuns e instabilidades SEFAZ.",
+  objectives:["Explicar a cobrança da tarifa de GNRE","Solucionar erros de leitura e pagamento (Pix/EMV)","Aplicar o fluxo de diagnóstico de atendimento","Orientar sobre configurações no XML"],
+  summary:"A funcionalidade de pagamento de GNRE permite o cálculo, emissão e pagamento das guias diretamente pelo ERP, com integração automática. O serviço possui uma tarifa (que inclui franquia, percentual e limite mensal de R$ 499,00) que o cliente visualiza antes de confirmar. Este módulo foca na tratativa dos principais erros, como guias vencidas, falhas de leitura de QR Code (EMV) e instabilidades na comunicação com a SEFAZ.",
+  keyPoints:[
+    "O pagamento da GNRE pela Conta Digital possui tarifa, informada antes da confirmação (percentual + valor fixo por guia, descontada a franquia, com teto de R$ 499,00/mês).",
+    "A API oficial só permite consultar guias dos últimos ~180 dias; guias antigas devem ir pro Portal GNRE.",
+    "Erro de 'Informações Incompletas' no AC (Acre) se resolve usando Pix (QR Code/Copia e Cola) — o convênio de código de barras foi encerrado nesse estado.",
+    "Erros como 'EMV não encontrado' ou 'Error fetching account' exigem gerar nova guia/QR Code.",
+    "Preencher o número do convênio no XML (Configurações > Vendas > Partilha de ICMS) evita travamentos (especialmente RN e MT) — se o campo ficar em branco, o XML é gerado sem a tag de convênio, sem trava do sistema.",
+    "Guia vencida, QR Code expirado e linha digitável inválida se resolvem emitindo uma nova guia; saldo insuficiente se resolve adicionando saldo à Conta Digital.",
+    "Instabilidades pontuais da SEFAZ estadual (RJ, MG, SP, BA, GO, MT, PR, RS, PE são as UFs de maior volume de chamados) não são falhas exclusivas da Olist — o correto é orientar e aguardar, não abrir chamado técnico de imediato.",
+    "Há 4 níveis de tratativa: Urgente (agir agora), Orientar (passar instrução ao cliente), Aguardar (instabilidade externa, normaliza sozinha) e Rotina (resolve com ação simples, ex: nova guia)."
+  ],
+  flow:[
+    "01. A guia foi emitida? (Se não, verificar erro de emissão ou indisponibilidade da SEFAZ).",
+    "02. O pagamento foi iniciado? (Se não, verificar saldo, cobrança da tarifa ou configuração da GNRE).",
+    "03. Qual é o erro? (EMV não encontrado, Error fetching account, erro interno/API, ou AC com informações incompletas — cada um tem uma tratativa própria).",
+    "04. Há urgência no pagamento? (Se sim, orientar pagamento por outra instituição financeira para evitar juros e multas; se não, aguardar a normalização e acompanhar o caso)."
+  ],
+  whenUse:["Dúvidas sobre a tarifa cobrada pelo serviço de automação de GNRE.","Erros ao tentar realizar o pagamento de GNRE (QR Code expirado, Saldo insuficiente, Erro interno, EMV, Error fetching account).","Guia vencida, convênio indisponível, erro ao consultar lote, guia já paga, linha digitável inválida ou QR Code não encontrado.","Falhas de geração do XML para os estados RN e MT.","Instabilidade pontual em uma SEFAZ estadual específica (ex: RJ, MG, SP, BA)."],
+  whenNot:["Dúvidas gerais sobre impostos não relacionados à GNRE.","Emissão manual pelo portal estadual em cenários de normalidade do ERP."],
+  commonErrors:["Achar que a tarifa de GNRE é indevida sem considerar o serviço de automação e limites.","Tentar pagar com linha digitável no Acre (agora é só PIX).","Abrir chamado técnico por erro de integração quando a própria SEFAZ estadual (ex: RJ, SP, MG, BA) está fora do ar — nesses casos a orientação é aguardar, não escalar.","Tratar toda instabilidade como 'urgente' — vale primeiro checar se há risco real de vencimento da guia antes de orientar pagamento por outro banco.","Não diferenciar 'guia vencida' (emitir nova guia) de 'guia já paga' (apenas confirmar no portal da SEFAZ, sem reemitir)."],
+  tips:["Sempre pergunte a UF do cliente, pois cada estado tem instabilidades e comportamentos diferentes (ex: AC só Pix; RJ com erros de chave Pix e instabilidades na SEFAZ-RJ; MG com dúvidas de convênio/XML).","Para o erro 'Error fetching account from dict', o primeiro passo é tentar gerar novo QR Code/Copia e cola.","Se o erro persistir e a guia estiver perto do vencimento, sempre oriente o pagamento por outro banco para evitar juros.","A API oficial da GNRE só consulta os últimos ~180 dias — para guias mais antigas, oriente a consulta direto no Portal GNRE.","QR Code expirado, guia vencida e linha digitável inválida têm a mesma solução na prática: emitir uma guia nova."],
+  examples:[
+    {t:"Cliente do Acre (AC) não consegue pagar GNRE", d:"Oriente o cliente a alterar a forma de pagamento para PIX nas Configurações GNRE, pois o convênio de código de barras foi encerrado."},
+    {t:"Erro 'Não foram encontradas informações para o EMV informado'", d:"Explique que o payload do Pix (EMV) falhou ou expirou. Oriente a gerar nova guia e novo QR Code."},
+    {t:"Cliente com guia vencida ou QR Code expirado", d:"Explique que o documento tem validade definida pela SEFAZ; após esse período, basta emitir uma nova guia."},
+    {t:"Cliente reclama de saldo insuficiente ao tentar pagar", d:"Oriente a adicionar saldo à Conta Digital e realizar um novo pagamento."},
+    {t:"Cliente relata erro apenas ao pagar GNRE de um estado específico (ex: RJ, SP, BA)", d:"Verifique se é uma instabilidade pontual daquela SEFAZ estadual — nesse caso, oriente aguardar o retorno do portal do estado em vez de tratar como falha da Olist."}
+  ],
+  faq:[
+    {q:"Por que estou sendo cobrado para pagar a GNRE?", a:"A tarifa é referente ao serviço de automação (cálculo, emissão, pagamento e integração) direto pelo ERP. Existe um limite mensal de R$ 499,00."},
+    {q:"O que é o 'Error fetching account from dict'?", a:"Significa que a Conta Digital não localizou a chave Pix do recebedor (QR expirado ou falha de comunicação). Gere novo código."},
+    {q:"Não consigo consultar uma guia do ano passado. Por quê?", a:"A API oficial da GNRE limita consultas a aproximadamente os últimos 180 dias. Consulte direto no Portal GNRE."},
+    {q:"A guia aparece como 'já paga', mas o cliente diz que não pagou. O que fazer?", a:"Oriente o cliente a confirmar o pagamento diretamente no portal da SEFAZ do estado, já que a guia foi quitada anteriormente segundo o sistema."},
+    {q:"O QR Code ou a linha digitável não funcionam. É preciso abrir chamado técnico?", a:"Não necessariamente — na maioria dos casos (linha digitável inválida, QR Code não encontrado) basta gerar uma nova guia. Chamado técnico é indicado se o erro interno da API persistir após novas tentativas."}
+  ],
+  checklist:["Sei explicar a tarifa de automação da GNRE","Conheço a particularidade do estado do AC (Acre)","Sei diagnosticar erro de EMV e Error fetching account","Sei orientar o preenchimento do convênio no XML","Sei aplicar o fluxo de 4 perguntas para diagnosticar qualquer erro de GNRE","Sei diferenciar instabilidade de SEFAZ estadual de falha da própria Olist","Sei quando orientar reemissão de guia x quando orientar aguardar"],
+  articles:[
+    {t:"Guias de Pagamento de Impostos", u:"https://ajuda.olist.com/guias-de-pagamento-de-impostos"},
+    {t:"Atualização nas taxas para pagamento de GNRE", u:"https://ajuda.olist.com/guias-de-pagamento-de-impostos/guias-de-pagamento?from_search=236143101&swifty_search_highlight=GNRE"}
+  ],
+  supportMaterial:[
+    {t:"Central de Diagnóstico GNRE", u:"gnre-central-diagnostico.html", d:"Material interno com os 18 problemas mapeados, tabela de UFs de maior volume e o fluxo de diagnóstico completo para atendimento."}
+  ],
+  quiz:[
+    {type:"single", q:"O cliente do estado do Acre (AC) reclama do status 'Informações Incompletas' ao pagar a GNRE. O que orientar?", opts:["Aguardar 24 horas","Pagar no portal da SEFAZ obrigatoriamente","Mudar a configuração de pagamento para PIX, pois o código de barras foi encerrado lá","Enviar a mercadoria sem a GNRE"], correct:2, exp:"No AC, o convênio para código de barras foi encerrado e o pagamento passou a ser aceito apenas via PIX."},
+    {type:"tf", q:"Verdadeiro ou falso: Se houver um 'Erro interno da API' e a guia estiver vencendo hoje, a melhor orientação é aguardar o sistema da Olist normalizar.", opts:["Verdadeiro","Falso"], correct:1, exp:"Falso. Se houver urgência para não gerar juros, oriente o cliente a realizar o pagamento em outra instituição financeira enquanto durar a indisponibilidade."},
+    {type:"single", q:"Para que serve o preenchimento do Número do Convênio nas configurações do XML (Tiny)?", opts:["Para isentar a tarifa da GNRE","Para evitar problemas de validação na SEFAZ, especialmente nos estados RN e MT","Para gerar o código EMV do Pix","Apenas para relatórios internos contábeis"], correct:1, exp:"O preenchimento do convênio na partilha de ICMS previne falhas de validação, principalmente no RN e MT."},
+    {type:"situacao", q:"Cliente questiona uma tarifa cobrada ao pagar a GNRE pela Conta Digital. Como explicar?", opts:["A tarifa é um erro sistêmico e será estornada","É uma tarifa da própria SEFAZ, não da Olist","A tarifa é pelo serviço de automação (emissão, cálculo e integração no ERP) e possui um teto máximo de R$ 499/mês","O cliente selecionou a guia errada"], correct:2, exp:"A tarifa cobra pelo serviço de integração nativa no ERP, limitando-se a um teto mensal após a franquia."},
+    {type:"single", q:"Um cliente de SP relata erro só ao pagar guias GNRE daquele estado, sem outro sintoma. Qual a melhor primeira hipótese?", opts:["Falha exclusiva do sistema da Olist","Possível instabilidade pontual da SEFAZ-SP — orientar e aguardar","O cliente digitou o CNPJ errado","A tarifa não foi paga"], correct:1, exp:"Erros restritos a uma UF específica costumam indicar instabilidade daquele portal estadual, não uma falha geral do sistema."},
+    {type:"situacao", q:"O cliente diz que a guia está com status 'já paga', mas ele garante que não pagou nada. Qual a orientação correta?", opts:["Reemitir a guia imediatamente","Pedir para o cliente confirmar diretamente no portal da SEFAZ do estado","Abrir chamado técnico de fraude","Ignorar, pois é um erro raro"], correct:1, exp:"O status indica que a guia já foi quitada anteriormente segundo o sistema — o cliente deve confirmar isso no portal da SEFAZ."}
+  ]
+},
+{
+  id:"m15", code:"M15", title:"Dúvidas Gerais e Suporte", level:"Avançado", time:"15 min",
+  description:"Boas práticas de pagamento, termos de uso, visita guiada e liberação de transações após aprovação.",
+  objectives:["Orientar boas práticas de pagamento","Explicar termos de uso e privacidade","Indicar a visita guiada com especialistas","Explicar quando a conta aprovada já pode transacionar"],
+  summary:"Esse módulo reúne o que não se encaixa exatamente em um produto específico, mas aparece bastante no atendimento: recomendações de segurança ao usar um pagamento, onde encontrar os termos de uso e a política de privacidade, a opção de visita guiada com especialistas para lojistas que preferem um acompanhamento mais próximo, e a dúvida clássica de 'minha conta foi aprovada, já posso transacionar?'.",
+  keyPoints:[
+    "Existem recomendações oficiais de boas práticas ao realizar um pagamento.",
+    "Termos de uso e política de privacidade estão disponíveis na Central de Ajuda.",
+    "A Olist oferece visita guiada com especialistas para apoiar o lojista.",
+    "Há uma orientação oficial sobre se a conta aprovada já libera transações imediatamente."
+  ],
+  flow:[
+    "O lojista tem a conta aprovada.",
+    "Ele consulta se já pode transacionar imediatamente ou se há alguma etapa extra.",
+    "Em caso de dúvida mais ampla, pode solicitar uma visita guiada com especialistas.",
+    "Para questões contratuais, os termos de uso e política de privacidade ficam disponíveis na Central de Ajuda."
+  ],
+  whenUse:["Lojista com conta recém-aprovada perguntando se já pode operar.","Lojista pedindo mais orientação/acompanhamento (indicar visita guiada).","Dúvidas contratuais ou de privacidade."],
+  whenNot:["Dúvidas técnicas específicas de um produto (Pix, boleto, cartão) — direcione ao módulo correspondente."],
+  commonErrors:["Presumir que toda conta aprovada libera transações no mesmo instante sem checar o artigo oficial.","Não oferecer a visita guiada para lojistas com muitas dúvidas recorrentes.","Não indicar onde ficam os termos de uso quando perguntado."],
+  tips:["Para lojistas novos com muitas perguntas, a visita guiada com especialistas costuma reduzir o volume de chamados futuros.","Sempre reforce boas práticas de segurança em pagamentos, mesmo quando não for isso que o lojista perguntou."],
+  examples:[
+    {t:"Lojista pergunta se já pode vender assim que aprovar a conta", d:"Consulte a orientação oficial sobre liberação de transações após aprovação antes de confirmar."},
+    {t:"Lojista se sente perdido com tantas funcionalidades", d:"Ofereça a visita guiada com especialistas como próximo passo."}
+  ],
+  faq:[
+    {q:"Onde ficam os termos de uso da Conta Digital?", a:"Na Central de Ajuda, na seção de Dúvidas Gerais e Suporte."},
+    {q:"O que é a visita guiada com especialistas?", a:"Um atendimento guiado oferecido pela Olist para apoiar o lojista a conhecer melhor a Conta Digital."}
+  ],
+  checklist:["Sei explicar boas práticas de pagamento","Sei indicar onde ficam termos de uso e privacidade","Sei oferecer a visita guiada com especialistas","Sei orientar sobre liberação de transações após aprovação"],
+  articles:[
+    {t:"Recomendações ao utilizar um pagamento", u:"https://ajuda.olist.com/duvidas-gerais-e-suporte/recomendacoes-ao-utilizar-um-pagamento-"},
+    {t:"Termos de uso e políticas de privacidade", u:"https://ajuda.olist.com/duvidas-gerais-e-suporte/termos-de-uso-e-politicas-de-privacidade"},
+    {t:"Visita guiada com especialistas", u:"https://ajuda.olist.com/duvidas-gerais-e-suporte/visita-guiada-com-especialistas"},
+    {t:"Assim que minha conta for aprovada, já será possível realizar transações?", u:"https://ajuda.olist.com/duvidas-gerais-e-suporte/assim-que-minha-conta-for-aprovada-ja-sera-possivel-realizar-transacoes"}
+  ],
+  quiz:[
+    {type:"single", q:"Um lojista novo tem muitas dúvidas sobre a Conta Digital. O que você pode oferecer, além dos artigos?", opts:["Nada além dos artigos","A visita guiada com especialistas","Cancelamento da conta","Trocar para outro produto"], correct:1, exp:"A visita guiada com especialistas é justamente para apoiar lojistas que querem um acompanhamento mais próximo."},
+    {type:"tf", q:"Verdadeiro ou falso: os termos de uso e a política de privacidade da Conta Digital estão disponíveis na Central de Ajuda.", opts:["Verdadeiro","Falso"], correct:0, exp:"Sim, ficam disponíveis na seção de Dúvidas Gerais e Suporte."},
+    {type:"situacao", q:"Lojista pergunta se, assim que a conta for aprovada, já pode transacionar. Qual a atitude correta?", opts:["Responder de cabeça sem checar nada","Consultar a orientação oficial sobre esse tema antes de confirmar","Dizer que nunca é possível","Encerrar o atendimento sem responder"], correct:1, exp:"Existe um artigo oficial dedicado a essa dúvida — é sempre mais seguro confirmar antes de orientar o lojista."}
+  ]
+}
+];
+
+/* =========================================================================
+   ESTADO E ARMAZENAMENTO
+========================================================================= */
+const KEY="olist-conta-digital-trilha-v1";
+let mem={};
+const store={
+  get(){try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):(mem[KEY]||null);}catch(e){return mem[KEY]||null;}},
+  set(o){const s=JSON.stringify(o);mem[KEY]=o;try{localStorage.setItem(KEY,s);}catch(e){}}
+};
+let state = store.get() || {
+  name:null, theme:"light",
+  articles:{},           // { articleId: true }
+  quizAnswers:{},         // { moduleId: { qIndex: selectedOptionIndex } }
+  quizScores:{},          // { moduleId: {score, correct, total, date} }
+  completedModules:[],    // [moduleId,...]
+  favorites:[],
+  studySeconds:0,
+  lastAccess:null,
+  updatedAt:null
+};
+let view={page:"dashboard", moduleId:null, tab:"trilha", quizIndex:0, quizSubmitted:{}};
+let sidebarOpen = window.innerWidth > 900;
+
+document.documentElement.setAttribute("data-theme", state.theme || "light");
+
+/* track study time */
+let studyTimer=setInterval(()=>{ state.studySeconds=(state.studySeconds||0)+1; },1000);
+window.addEventListener("beforeunload", saveState);
+
+function articleId(modId,idx){ return modId+"-a"+idx; }
+
+function saveState(){
+  state.updatedAt=Date.now();
+  state.lastAccess=Date.now();
+  store.set(state);
+  const p=document.getElementById("savedPill");
+  if(p){ p.classList.add("show"); clearTimeout(window._sp); window._sp=setTimeout(()=>p.classList.remove("show"),1000); }
+}
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(window._tt); window._tt=setTimeout(()=>t.classList.remove("show"),2200);
+}
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+/* =========================================================================
+   PROGRESSO / ESTATÍSTICAS
+========================================================================= */
+function moduleArticleStats(mod){
+  const total=mod.articles.length;
+  let done=0;
+  mod.articles.forEach((a,i)=>{ if(state.articles[articleId(mod.id,i)]) done++; });
+  return {done,total,pct: total?Math.round(done/total*100):0};
+}
+function moduleQuizStat(mod){
+  const s=state.quizScores[mod.id];
+  return s || null;
+}
+function moduleComplete(mod){
+  return state.completedModules.includes(mod.id);
+}
+function overallStats(){
+  let artDone=0, artTotal=0;
+  MODULES.forEach(m=>{ const s=moduleArticleStats(m); artDone+=s.done; artTotal+=s.total; });
+  const modsDone=MODULES.filter(m=>moduleComplete(m)).length;
+  const quizzesTaken=Object.keys(state.quizScores).length;
+  let avgScore=0;
+  if(quizzesTaken){ avgScore=Math.round(Object.values(state.quizScores).reduce((a,b)=>a+b.score,0)/quizzesTaken); }
+  const pct = MODULES.length ? Math.round(((modsDone) / MODULES.length)*70 + (artTotal? (artDone/artTotal)*30 : 0)) : 0;
+  return {artDone, artTotal, modsDone, totalMods:MODULES.length, quizzesTaken, avgScore, pct:Math.min(100,pct)};
+}
+function levelFor(pct){
+  const L=[{min:0,name:"Iniciante"},{min:20,name:"Em desenvolvimento"},{min:45,name:"Em ritmo"},{min:70,name:"Proficiente"},{min:95,name:"Pronto para atender"}];
+  let cur=L[0]; L.forEach(l=>{ if(pct>=l.min) cur=l; }); return cur.name;
+}
+function fmtTime(sec){
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
+  if(h>0) return h+"h "+m+"min";
+  return m+" min";
+}
+
+/* =========================================================================
+   RENDER: SHELL / SIDEBAR
+========================================================================= */
+function renderSidebar(){
+  const nav=document.getElementById("navModules");
+  nav.innerHTML = MODULES.map(m=>{
+    const complete = moduleComplete(m);
+    const active = (view.page==="module" && view.moduleId===m.id);
+    return `<div class="nav-item ${active?'active':''} ${complete?'done':''}" data-goto="${m.id}">
+      <div class="num">${m.code.replace('M','')}</div>
+      <div class="lbl">${esc(m.title)}</div>
+      <svg class="chk" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>`;
+  }).join("");
+  document.getElementById("navDashboard").classList.toggle("active", view.page==="dashboard");
+  nav.querySelectorAll("[data-goto]").forEach(el=>{
+    el.addEventListener("click",()=>{ openModule(el.getAttribute("data-goto")); });
+  });
+}
+function updateBreadcrumb(){
+  const b=document.getElementById("breadcrumb");
+  if(view.page==="dashboard"){ b.innerHTML="<b>Painel</b>"; return; }
+  const mod=MODULES.find(m=>m.id===view.moduleId);
+  const tabLabel = view.tab==="quiz" ? "Quiz" : (view.tab==="overview" ? "Visão geral" : "Trilha de conteúdo");
+  b.innerHTML = `Painel <span class="sep">/</span> <b>${esc(mod.title)}</b> <span class="sep">/</span> ${tabLabel}`;
+}
+
+/* =========================================================================
+   RENDER: DASHBOARD
+========================================================================= */
+function ring(pct,size){
+  size=size||190; const r=size/2-16, c=2*Math.PI*r, off=c*(1-pct/100), cx=size/2, cy=size/2;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+   <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B72F0"/><stop offset="1" stop-color="#0A3FB0"/></linearGradient></defs>
+   <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--line-soft)" stroke-width="14"/>
+   <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#g1)" stroke-width="14" stroke-linecap="round"
+    stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" style="transition:stroke-dashoffset .6s cubic-bezier(.2,.8,.2,1)"/></svg>`;
+}
+function renderDashboard(){
+  const core=overallStats();
+  const lvl=levelFor(core.pct);
+  let html = `
+  <div class="hero">
+    <div class="gauge">${ring(core.pct)}<div class="center"><div class="pct">${core.pct}<span>%</span></div><div class="lvl">${lvl}</div></div></div>
+    <div class="hero-info">
+      <div class="eyebrow">Evolução de conhecimento</div>
+      <h2><span class="who">${state.name? esc(state.name): "Analista"}</span> · Trilha Conta Digital</h2>
+      <div class="meta">${MODULES.length} módulos</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="n">${core.modsDone}/${core.totalMods}</div><div class="l">Módulos concluídos</div></div>
+        <div class="stat-box"><div class="n">${core.artDone}/${core.artTotal}</div><div class="l">Artigos estudados</div></div>
+        <div class="stat-box"><div class="n">${core.quizzesTaken}</div><div class="l">Quizzes realizados</div></div>
+        <div class="stat-box"><div class="n">${core.avgScore}%</div><div class="l">Média de acertos</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ready-banner ${core.pct>=95?'show':''}">
+    <div class="badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 5 5.6.7-4 3.9 1 5.6L12 19.8 6.9 22l1-5.6-4-3.9 5.6-.7L12 2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+    <div><h4>Pronto(a) para atender 🎉</h4><p>Você concluiu a trilha completa da Conta Digital. Continue revisando os módulos sempre que precisar.</p></div>
+  </div>
+  <div class="section-head"><h3>Módulos da trilha</h3><span class="hint">Clique em um módulo para estudar o conteúdo e fazer o quiz</span></div>
+  <div class="mod-grid">`;
+  MODULES.forEach(m=>{
+    const st=moduleArticleStats(m);
+    const qz=moduleQuizStat(m);
+    const complete=moduleComplete(m);
+    html+=`<div class="mod-card ${complete?'complete':''}" data-open="${m.id}">
+      <div class="mc-top"><div class="mc-code">${m.code}</div><div class="mc-title">${esc(m.title)}</div></div>
+      <div class="mc-desc">${esc(m.description)}</div>
+      <div class="mc-bar"><i style="width:${st.pct}%"></i></div>
+      <div class="mc-foot">
+        <span>${st.done}/${st.total} artigos · ${m.time}</span>
+        ${complete? '<span class="done-badge">✓ Concluído</span>' : (qz? `<span>Quiz: ${qz.score}%</span>` : '<span>Quiz pendente</span>')}
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById("content").className="content wide";
+  document.getElementById("content").innerHTML=html;
+  document.querySelectorAll("[data-open]").forEach(el=>{
+    el.addEventListener("click",()=>openModule(el.getAttribute("data-open")));
+  });
+}
+
+/* =========================================================================
+   RENDER: MODULE (overview + quiz)
+========================================================================= */
+function openModule(id, tab){
+  view.page="module"; view.moduleId=id; view.tab=tab||"trilha"; view.quizIndex=0;
+  renderAll(); window.scrollTo({top:0});
+}
+function renderModule(){
+  const mod=MODULES.find(m=>m.id===view.moduleId);
+  if(!mod){ view.page="dashboard"; renderAll(); return; }
+  const st=moduleArticleStats(mod);
+  const qz=moduleQuizStat(mod);
+  const complete=moduleComplete(mod);
+
+  let html = `
+  <div class="mod-head-card">
+    <div class="tagrow">
+      <span class="pill blue">${mod.code}</span>
+      <span class="pill">${esc(mod.level)}</span>
+      <span class="pill">⏱ ${esc(mod.time)}</span>
+      ${complete? '<span class="pill gold">✓ Concluído</span>':''}
+    </div>
+    <h2>${esc(mod.title)}</h2>
+    <div class="desc">${esc(mod.description)}</div>
+    <div class="objectives">${mod.objectives.map(o=>`<span>🎯 ${esc(o)}</span>`).join("")}</div>
+  </div>
+  <div class="tabs">
+    <div class="tab ${view.tab==='trilha'?'active':''}" data-tab="trilha">Trilha de Conteúdo${st.total? ` (${st.done}/${st.total})`:''}</div>
+    <div class="tab ${view.tab==='overview'?'active':''}" data-tab="overview">Visão geral</div>
+    <div class="tab ${view.tab==='quiz'?'active':''}" data-tab="quiz">Quiz (${mod.quiz.length} perguntas)</div>
+  </div>
+  <div id="tabContent"></div>
+  <div class="mod-footer-nav">
+    <button class="btn" id="prevModBtn">← Módulo anterior</button>
+    <button class="btn primary" id="nextModBtn">Próximo módulo →</button>
+  </div>`;
+  document.getElementById("content").className="content";
+  document.getElementById("content").innerHTML=html;
+
+  document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{ view.tab=t.getAttribute("data-tab"); view.quizIndex=0; renderAll(); }));
+
+  const idx=MODULES.findIndex(m=>m.id===mod.id);
+  const prevBtn=document.getElementById("prevModBtn"), nextBtn=document.getElementById("nextModBtn");
+  prevBtn.disabled = idx<=0;
+  nextBtn.disabled = idx>=MODULES.length-1;
+  prevBtn.addEventListener("click",()=>{ if(idx>0) openModule(MODULES[idx-1].id); });
+  nextBtn.addEventListener("click",()=>{ if(idx<MODULES.length-1) openModule(MODULES[idx+1].id); });
+
+  if(view.tab==="trilha") renderTrilhaTab(mod);
+  else if(view.tab==="overview") renderOverviewTab(mod);
+  else renderQuizTab(mod);
+}
+
+function renderTrilhaTab(mod){
+  const wrap=document.getElementById("tabContent");
+  const st=moduleArticleStats(mod);
+  
+  let html = `
+  <div class="card trail-intro">
+    <h4>📚 Trilha de Conteúdo — Central de Ajuda</h4>
+    <p>Comece por aqui: estes são os artigos oficiais da Central de Ajuda sobre este módulo. Marque cada um como estudado à medida que for lendo — seu progresso é salvo automaticamente.</p>
+    <div class="trail-progress">
+      <div class="trail-progress-head">
+        <span class="trail-progress-count">${st.done} de ${st.total} artigos estudados</span>
+        <span class="trail-progress-pct">${st.pct}%</span>
+      </div>
+      <div class="mc-bar"><i style="width:${st.pct}%"></i></div>
+    </div>
+  </div>
+  <div class="card">
+    <ol class="trail-list">
+      ${mod.articles.map((a,i)=>{
+        const id=articleId(mod.id,i); const done=!!state.articles[id];
+        return `<li class="article-item trail-item ${done?'done':''}">
+          <div class="check" data-artcheck="${id}" role="checkbox" aria-checked="${done}" tabindex="0">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="article-main">
+            <div class="lab" data-artcheck="${id}">${esc(a.t)}</div>
+            <a href="${a.u}" target="_blank" rel="noopener">Abrir artigo original ↗</a>
+          </div>
+        </li>`;
+      }).join("")}
+    </ol>
+  </div>`;
+
+  if(mod.supportMaterial){
+    html += `
+    <div class="card">
+      <h4>🧭 Material de apoio interno</h4>
+      <p style="color:var(--muted); font-size:13px; margin-bottom:10px;">Complementos de treinamento produzidos internamente — não substituem os artigos oficiais acima, mas ajudam na hora do atendimento.</p>
+      <ol class="trail-list">
+        ${mod.supportMaterial.map(s=>`
+          <li class="article-item trail-item">
+            <div class="article-main">
+              <div class="lab">${esc(s.t)}</div>
+              <p style="font-size:12.5px; color:var(--muted); margin:2px 0 6px;">${esc(s.d)}</p>
+              <a href="${s.u}" target="_blank" rel="noopener">Abrir material ↗</a>
+            </div>
+          </li>`).join("")}
+      </ol>
+    </div>`;
+  }
+
+  /* Se for o módulo da Maquininha (Tap on Phone), renderizar a estrutura com os vídeos */
+  if(mod.tapStructure){
+    const ts = mod.tapStructure;
+    html += `
+    <!-- Parte 1: Visão Geral e Conceitos -->
+    <div class="card">
+      <h4>💡 ${esc(ts.part1.title)}</h4>
+      <p>${esc(ts.part1.theory)}</p>
+    </div>
+
+    <!-- Parte 2: Aulas com Vídeos -->
+    <div class="card">
+      <h4>🎬 2. Fluxos Operacionais de Cobrança</h4>
+      ${ts.part2.map((item, idx)=>{
+        return `
+        <div style="margin-bottom:24px; padding-bottom:18px; border-bottom:1px solid var(--line-soft);">
+          <h5 style="font-size:15px; font-weight:700; color:var(--blue-deep); margin:0 0 8px;">${esc(item.title)}</h5>
+          <p style="font-size:13.5px; margin-bottom:8px;">${esc(item.theory)}</p>
+          
+          <!-- Microlearning Intro -->
+          <div style="background:var(--bg); border-left:3px solid var(--blue); padding:10px 14px; border-radius:8px; font-size:13px; margin-bottom:12px;">
+            <b>📱 O que observar durante a demonstração:</b> ${esc(item.intro)}
+          </div>
+
+          <!-- Player de Vídeo -->
+          <div style="border-radius:12px; overflow:hidden; background:#000; margin-bottom:12px;">
+            <video width="100%" controls style="display:block;">
+              <source src="${item.video}" type="video/mp4">
+              Seu navegador não suporta a exibição de vídeos.
+            </video>
+          </div>
+
+          <!-- Alerta visual de observação pedagógica -->
+          ${item.alert ? `
+          <div style="background:var(--danger-soft); color:var(--ink-2); border:1px solid var(--danger); padding:12px 14px; border-radius:10px; font-weight:600; font-size:13.5px; margin-bottom:12px;">
+            ⚠️ ${esc(item.alert)}
+          </div>` : ''}
+
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- Parte 3: Boas Práticas e Resolução de Problemas -->
+    <div class="card">
+      <h4>📖 ${esc(ts.part3.title)}</h4>
+      <p>${esc(ts.part3.theory)}</p>
+      <div style="background:var(--gold-soft); color:#432c00; padding:12px 14px; border-radius:10px; font-size:13px; font-weight:500;">
+        📑 ${esc(ts.part3.pdfNote)} <a href="${esc(ts.part3.pdfUrl)}" target="_blank" rel="noopener" style="color:var(--gold-deep); font-weight:700; text-decoration:underline;">'${esc(ts.part3.pdfLinkText)}'</a>.
+      </div>
+    </div>`;
+  }
+
+  if(st.pct>=100){
+    html += `<div class="card trail-done-note">✅ Você concluiu todos os artigos deste módulo. Agora veja a <b>Visão geral</b> e faça o <b>Quiz</b> para consolidar o aprendizado.</div>`;
+  }
+
+  wrap.innerHTML = html;
+
+  wrap.querySelectorAll("[data-artcheck]").forEach(el=>{
+    el.addEventListener("click",(e)=>{ e.stopPropagation(); toggleArticle(el.getAttribute("data-artcheck")); });
+    if(el.classList.contains("check")) el.addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggleArticle(el.getAttribute("data-artcheck")); } });
+  });
+}
+
+function renderOverviewTab(mod){
+  const wrap=document.getElementById("tabContent");
+  wrap.innerHTML = `
+  <div class="card">
+    <h4><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Resumo em linguagem simples</h4>
+    <p>${esc(mod.summary)}</p>
+  </div>
+  <div class="card">
+    <h4><svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.8"/></svg>Principais pontos</h4>
+    <ul>${mod.keyPoints.map(k=>`<li>${esc(k)}</li>`).join("")}</ul>
+  </div>
+  <div class="card">
+    <h4><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16m0 0l-6-6m6 6l-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Fluxo de funcionamento</h4>
+    <ol class="flow-list">${mod.flow.map(f=>`<li>${esc(f)}</li>`).join("")}</ol>
+  </div>
+  <div class="two-col">
+    <div class="card use-card"><h4>✅ Quando utilizar</h4><ul>${mod.whenUse.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="card notuse-card"><h4>🚫 Quando NÃO utilizar</h4><ul>${mod.whenNot.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  </div>
+  <div class="card">
+    <h4>⚠️ Erros comuns</h4>
+    ${mod.commonErrors.map(e=>`<div class="err-item">${esc(e)}</div>`).join("")}
+  </div>
+  <div class="card">
+    <h4>💡 Dicas para atendimento</h4>
+    ${mod.tips.map(t=>`<div class="tip-item">${esc(t)}</div>`).join("")}
+  </div>
+  <div class="card">
+    <h4>📌 Exemplos reais de atendimento</h4>
+    ${mod.examples.map(e=>`<div class="example-item"><b>${esc(e.t)}</b><br>${esc(e.d)}</div>`).join("")}
+  </div>
+  <div class="card">
+    <h4>❓ Perguntas frequentes</h4>
+    ${mod.faq.map(f=>`<details class="faq-item"><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("")}
+  </div>
+  <div class="card">
+    <h4>✔️ Checklist de domínio do módulo</h4>
+    ${mod.checklist.map((c,i)=>{
+      const cid=mod.id+"-chk"+i; const checked = !!state.articles[cid];
+      return `<label class="checklist-item"><input type="checkbox" data-chk="${cid}" ${checked?'checked':''}> <span>${esc(c)}</span></label>`;
+    }).join("")}
+  </div>
+  `;
+  wrap.querySelectorAll("[data-artcheck]").forEach(el=>{
+    el.addEventListener("click",(e)=>{ e.stopPropagation(); toggleArticle(el.getAttribute("data-artcheck")); });
+    if(el.classList.contains("check")) el.addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggleArticle(el.getAttribute("data-artcheck")); } });
+  });
+  wrap.querySelectorAll("[data-chk]").forEach(el=>{
+    el.addEventListener("change",()=>{ 
+      const id=el.getAttribute("data-chk");
+      if(el.checked) state.articles[id]=true; else delete state.articles[id];
+      saveState();
+    });
+  });
+}
+
+function toggleArticle(id){
+  if(state.articles[id]) delete state.articles[id]; else state.articles[id]=true;
+  saveState();
+  renderAll();
+}
+
+/* ===== Quiz ===== */
+function renderQuizTab(mod){
+  const wrap=document.getElementById("tabContent");
+  const existing = state.quizScores[mod.id];
+  if(existing && !view.retaking){
+    renderQuizResult(mod, existing, state.quizAnswers[mod.id]||{});
+    return;
+  }
+  const total=mod.quiz.length;
+  const answers = state.quizAnswers[mod.id] || {};
+  const qi = view.quizIndex;
+  const q = mod.quiz[qi];
+  const typeLabel = {single:"Múltipla escolha", tf:"Verdadeiro ou falso", situacao:"Situação de atendimento", estudo:"Estudo de caso"}[q.type] || "Pergunta";
+  const selected = answers[qi];
+  const submitted = !!view.quizSubmitted[mod.id+"-"+qi];
+
+  let progressBar = "";
+  for(let i=0;i<total;i++){
+    let cls = "";
+    if(answers[i]!==undefined) cls="done";
+    if(i===qi) cls+=" current";
+    progressBar += `<i class="${cls}"></i>`;
+  }
+
+  wrap.innerHTML = `
+  <div class="quiz-progress">${progressBar}</div>
+  <div class="qcard">
+    <span class="qtype">${typeLabel} · Pergunta ${qi+1} de ${total}</span>
+    <div class="qtext">${esc(q.q)}</div>
+    <div id="optsWrap">
+      ${q.opts.map((o,oi)=>{
+        let cls="opt";
+        if(submitted){
+          if(oi===q.correct) cls+=" correct";
+          else if(oi===selected) cls+=" wrong";
+        } else if(selected===oi) cls+=" selected";
+        return `<div class="${cls}" data-opt="${oi}"><div class="radio"></div><div>${esc(o)}</div></div>`;
+      }).join("")}
+    </div>
+    <div class="qexp ${submitted?'show':''} ${submitted && selected===q.correct?'ok':'bad'}">${submitted? '<b>'+(selected===q.correct?'Correto! ':'Não foi dessa vez. ')+'</b>'+esc(q.exp) : ''}</div>
+  </div>
+  <div class="quiz-nav">
+    <button class="btn" id="qPrev" ${qi===0?'disabled':''}>← Anterior</button>
+    ${qi<total-1 ? '<button class="btn primary" id="qNext">Próxima →</button>' : '<button class="btn gold" id="qFinish">Finalizar quiz</button>'}
+  </div>`;
+
+  wrap.querySelectorAll("[data-opt]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      if(!state.quizAnswers[mod.id]) state.quizAnswers[mod.id]={};
+      state.quizAnswers[mod.id][qi]=parseInt(el.getAttribute("data-opt"));
+      view.quizSubmitted[mod.id+"-"+qi]=true;
+      saveState();
+      renderQuizTab(mod);
+    });
+  });
+  const qPrev=document.getElementById("qPrev");
+  if(qPrev) qPrev.addEventListener("click",()=>{ view.quizIndex--; renderQuizTab(mod); });
+  const qNext=document.getElementById("qNext");
+  if(qNext) qNext.addEventListener("click",()=>{ view.quizIndex++; renderQuizTab(mod); });
+  const qFinish=document.getElementById("qFinish");
+  if(qFinish) qFinish.addEventListener("click",()=>finishQuiz(mod));
+}
+
+function finishQuiz(mod){
+  const answers = state.quizAnswers[mod.id] || {};
+  let correct=0;
+  mod.quiz.forEach((q,i)=>{ if(answers[i]===q.correct) correct++; });
+  const score=Math.round((correct/mod.quiz.length)*100);
+  state.quizScores[mod.id]={score, correct, total:mod.quiz.length, date:Date.now()};
+  if(score>=70 && !state.completedModules.includes(mod.id)) state.completedModules.push(mod.id);
+  view.retaking=false;
+  saveState();
+  renderAll();
+  toast(score>=70? "Módulo concluído! 🎉" : "Quiz registrado — revise e tente novamente.");
+}
+
+function renderQuizResult(mod, result, answers){
+  const wrap=document.getElementById("tabContent");
+  const pass = result.score>=70;
+  wrap.innerHTML = `
+  <div class="quiz-result ${pass?'pass':'fail'}">
+    <div style="font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase">Resultado do quiz</div>
+    <div class="score">${result.score}%</div>
+    <div style="color:var(--muted);margin-bottom:6px">${result.correct} de ${result.total} corretas ${pass? '· Aprovado (mínimo 70%)' : '· Mínimo exigido: 70%'}</div>
+    <button class="btn primary" id="retakeBtn" style="margin-top:12px">Refazer quiz</button>
+    <div style="margin-top:22px">
+      ${mod.quiz.map((q,i)=>{
+        const sel=answers[i]; const ok=sel===q.correct;
+        return `<div class="review-item"><div class="rq">${i+1}. ${esc(q.q)} <span class="flag ${ok?'ok':'bad'}">${ok?'Correto':'Revisar'}</span></div>
+        <div class="ra">Resposta correta: ${esc(q.opts[q.correct])}<br>${esc(q.exp)}</div></div>`;
+      }).join("")}
+    </div>
+  </div>`;
+  document.getElementById("retakeBtn").addEventListener("click",()=>{
+    view.retaking=true; view.quizIndex=0;
+    state.quizAnswers[mod.id]={};
+    mod.quiz.forEach((q,i)=>{ delete view.quizSubmitted[mod.id+"-"+i]; });
+    renderAll();
+  });
+}
+
+/* =========================================================================
+   INIT / EVENTOS GLOBAIS
+========================================================================= */
+function renderAll(){
+  renderSidebar();
+  updateBreadcrumb();
+  if(view.page==="dashboard") renderDashboard(); else renderModule();
+  document.getElementById("sidebar").classList.toggle("collapsed", !sidebarOpen);
+}
+
+document.getElementById("navDashboard").addEventListener("click",()=>{ view.page="dashboard"; renderAll(); window.scrollTo({top:0}); });
+document.getElementById("toggleSidebar").addEventListener("click",()=>{ sidebarOpen=!sidebarOpen; document.getElementById("sidebar").classList.toggle("collapsed", !sidebarOpen); });
+document.getElementById("printBtn").addEventListener("click",()=>window.print());
+document.getElementById("exportBtn").addEventListener("click",()=>{
+  const core=overallStats();
+  const data={ app:"olist-conta-digital-trilha", exportedAt:Date.now(), name:state.name,
+    percent:core.pct, level:levelFor(core.pct), modulesCompleted:state.completedModules,
+    quizScores:state.quizScores, articlesStudied:state.articles, studySeconds:state.studySeconds };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="progresso-trilha-conta-digital.json"; document.body.appendChild(a); a.click(); a.remove();
+  toast("Progresso exportado em JSON");
+});
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  state.theme = state.theme==="dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", state.theme);
+  saveState();
+});
+window.addEventListener("scroll",()=>{
+  document.getElementById("backTop").classList.toggle("show", window.scrollY>420);
+});
+document.getElementById("backTop").addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+window.addEventListener("resize",()=>{
+  if(window.innerWidth<=900){ sidebarOpen=false; document.getElementById("sidebar").classList.add("collapsed"); }
+});
+
+function updateUserChip(){
+  const chip=document.getElementById("userChip");
+  if(!chip) return;
+  if(state.name){
+    const initials = state.name.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+    document.getElementById("userAvatar").textContent = initials;
+    document.getElementById("userName").textContent = state.name;
+    chip.style.display = "flex";
+  } else {
+    chip.style.display = "none";
+  }
+}
+
+function requireName(){
+  const overlay=document.getElementById("setupScreen");
+  if(state.name && state.name.trim()){
+    overlay.classList.add("hide");
+    return true;
+  }
+  overlay.classList.remove("hide");
+  const input=document.getElementById("setupNameInput");
+  const btn=document.getElementById("setupNameBtn");
+  const submit=()=>{
+    const v=input.value.trim();
+    if(!v){ input.focus(); input.style.borderColor="var(--danger)"; return; }
+    state.name=v;
+    saveState();
+    overlay.classList.add("hide");
+    updateUserChip();
+    renderAll();
+  };
+  btn.onclick=submit;
+  input.onkeydown=(e)=>{ if(e.key==="Enter") submit(); };
+  setTimeout(()=>input.focus(),50);
+  return false;
+}
+
+/* boot */
+(function(){
+  if(window.innerWidth<=900){ sidebarOpen=false; }
+  requireName();
+  updateUserChip();
+  renderAll();
+})();
+</script>
+</body>
+</html>
