@@ -2,6 +2,7 @@
 <html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="UTF-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trilha de Conhecimento — Olist Conta Digital</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -672,26 +673,26 @@ const MODULES = [
         title:"Aula 2.1 — Criando Pedido e Emitindo Cobrança via Pedido de Venda",
         theory:"Passo a passo completo para criar o Pedido de Venda diretamente no menu de Vendas, salvar o registro, acessar 'Mais ações' e acionar a emissão da cobrança.",
         intro:"Observe no vídeo como o operador insere o cliente, adiciona os produtos, escolhe a forma de pagamento e finaliza acionando a opção 'Emitir cobrança' no menu superior.",
-        video:"https://www.youtube.com/embed/fHrX3_YRalE"
+        video:"https://www.youtube-nocookie.com/embed/fHrX3_YRalE"
       },
       {
         title:"Aula 2.2 — Cobrança via PDV sem Vínculo de Cliente (cenário que NÃO concilia)",
         theory:"Demonstração do fluxo rápido de venda pelo PDV mantendo o cadastro genérico de 'Consumidor Final'.",
         intro:"Atenção especial ao cliente selecionado durante o vídeo: veja o que acontece quando a venda é concluída sem a identificação do comprador.",
-        video:"https://www.youtube.com/embed/cjyW6Ba00rI",
+        video:"https://www.youtube-nocookie.com/embed/cjyW6Ba00rI",
         alert:"Atenção: esse fluxo gera a cobrança normalmente, porém não realiza a conciliação automática no sistema."
       },
       {
         title:"Aula 2.3 — Cobrança Automática via PDV com Cliente Selecionado",
         theory:"Apresentação da boa prática operacional no PDV: alterar o cliente padrão antes da geração do pagamento para garantir a baixa e conciliação automática.",
         intro:"Repare como a simples busca e seleção do cliente cadastrado altera todo o fluxo de inteligência financeira do pedido.",
-        video:"https://www.youtube.com/embed/mQARPmcJ69k"
+        video:"https://www.youtube-nocookie.com/embed/mQARPmcJ69k"
       },
       {
         title:"Aula 2.4 — Cobrança a partir do Contas a Receber",
         theory:"Procedimento para lançar e cobrar um título financeiro diretamente no módulo de Contas a Receber usando a Conta Digital como Gateway.",
         intro:"Acompanhe o caminho pelo menu Finanças > Contas a Receber, o preenchimento dos dados do título e a chamada da Maquininha no Celular.",
-        video:"https://www.youtube.com/embed/3jwL4MM_WpI"
+        video:"https://www.youtube-nocookie.com/embed/3jwL4MM_WpI"
       }
     ],
     part3:{
@@ -1118,10 +1119,12 @@ let state = store.get() || {
   quizScores:{},          // { moduleId: {score, correct, total, date} }
   completedModules:[],    // [moduleId,...]
   favorites:[],
+  videoProgress:{},       // { "modId-vIdx": {pct, watched} }
   studySeconds:0,
   lastAccess:null,
   updatedAt:null
 };
+state.videoProgress = state.videoProgress || {}; // compatibilidade com progresso salvo antes desta versão
 let view={page:"dashboard", moduleId:null, tab:"trilha", quizIndex:0, quizSubmitted:{}};
 let sidebarOpen = window.innerWidth > 900;
 
@@ -1132,6 +1135,100 @@ let studyTimer=setInterval(()=>{ state.studySeconds=(state.studySeconds||0)+1; }
 window.addEventListener("beforeunload", saveState);
 
 function articleId(modId,idx){ return modId+"-a"+idx; }
+
+/* =========================================================================
+   PLAYER DE VÍDEO INTEGRADO (YouTube IFrame API)
+   Em vez do aluno usar os controles nativos do YouTube, carregamos a API
+   oficial só para escutar eventos (play/pause/fim) e desenhar nossa própria
+   barra de progresso + botão "Próxima aula", mantendo o aluno na página.
+========================================================================= */
+let ytApiReady = false;
+let ytPendingInits = [];
+let ytPlayers = {};
+let ytProgressTimers = {};
+
+function loadYouTubeAPI(){
+  if(window.YT && window.YT.Player){ ytApiReady=true; return; }
+  if(document.getElementById("yt-iframe-api")) return;
+  const tag=document.createElement("script");
+  tag.id="yt-iframe-api";
+  tag.src="https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+}
+window.onYouTubeIframeAPIReady = function(){
+  ytApiReady = true;
+  ytPendingInits.forEach(fn=>fn());
+  ytPendingInits = [];
+};
+loadYouTubeAPI();
+
+function videoKey(modId, idx){ return modId+"-v"+idx; }
+function ytIdFromUrl(url){ const m=(url||"").match(/embed\/([a-zA-Z0-9_-]+)/); return m?m[1]:""; }
+
+function initTapVideos(mod){
+  /* limpa timers/players de uma renderização anterior deste módulo */
+  Object.keys(ytProgressTimers).forEach(k=>{ if(k.indexOf(mod.id+"-v")===0){ clearInterval(ytProgressTimers[k]); delete ytProgressTimers[k]; } });
+
+  const run=()=>{
+    mod.tapStructure.part2.forEach((item, idx)=>{
+      const elId = "ytplayer-"+mod.id+"-"+idx;
+      const el = document.getElementById(elId);
+      if(!el) return;
+      const vid = ytIdFromUrl(item.video);
+      if(!vid) return;
+      const key = videoKey(mod.id, idx);
+      ytPlayers[key] = new YT.Player(elId, {
+        videoId: vid,
+        host: "https://www.youtube-nocookie.com",
+        playerVars:{ rel:0, modestbranding:1, iv_load_policy:3, playsinline:1, fs:1, origin: location.origin },
+        events:{
+          onStateChange:(e)=>onTapVideoStateChange(mod, idx, e)
+        }
+      });
+    });
+  };
+  if(ytApiReady) run(); else ytPendingInits.push(run);
+}
+
+function onTapVideoStateChange(mod, idx, e){
+  const key = videoKey(mod.id, idx);
+  if(e.data===YT.PlayerState.PLAYING){
+    clearInterval(ytProgressTimers[key]);
+    ytProgressTimers[key]=setInterval(()=>updateVideoProgress(mod, idx),1000);
+  } else {
+    clearInterval(ytProgressTimers[key]);
+    if(e.data===YT.PlayerState.ENDED) markVideoWatched(mod, idx, 100);
+    else updateVideoProgress(mod, idx, true);
+  }
+}
+
+function updateVideoProgress(mod, idx, forceSave){
+  const key = videoKey(mod.id, idx);
+  const player = ytPlayers[key];
+  if(!player || typeof player.getDuration!=="function") return;
+  const dur = player.getDuration();
+  if(!dur) return;
+  const pct = Math.min(100, Math.round((player.getCurrentTime()/dur)*100));
+  const bar=document.getElementById("vprog-"+mod.id+"-"+idx);
+  const pctEl=document.getElementById("vpct-"+mod.id+"-"+idx);
+  if(bar) bar.style.width=pct+"%";
+  if(pctEl) pctEl.textContent=pct+"%";
+  const prev = state.videoProgress[key] || {};
+  const watched = prev.watched || pct>=90;
+  state.videoProgress[key] = {pct: Math.max(pct, prev.pct||0), watched};
+  if(watched && !prev.watched) markVideoWatched(mod, idx, pct);
+  else if(forceSave) saveState();
+}
+
+function markVideoWatched(mod, idx, pct){
+  const key = videoKey(mod.id, idx);
+  state.videoProgress[key] = {pct: Math.max(pct,90), watched:true};
+  saveState();
+  const doneEl=document.getElementById("vdone-"+mod.id+"-"+idx);
+  if(doneEl) doneEl.style.display="";
+  const nextBtn=document.getElementById("vnext-"+mod.id+"-"+idx);
+  if(nextBtn) nextBtn.style.display="";
+}
 
 function saveState(){
   state.updatedAt=Date.now();
@@ -1385,8 +1482,11 @@ function renderTrilhaTab(mod){
     <div class="card">
       <h4>🎬 2. Fluxos Operacionais de Cobrança</h4>
       ${ts.part2.map((item, idx)=>{
+        const key = videoKey(mod.id, idx);
+        const vp = state.videoProgress[key] || {pct:0, watched:false};
+        const hasNext = idx < ts.part2.length-1;
         return `
-        <div style="margin-bottom:24px; padding-bottom:18px; border-bottom:1px solid var(--line-soft);">
+        <div id="lesson-${mod.id}-${idx}" style="margin-bottom:24px; padding-bottom:18px; border-bottom:1px solid var(--line-soft); scroll-margin-top:90px;">
           <h5 style="font-size:15px; font-weight:700; color:var(--blue-deep); margin:0 0 8px;">${esc(item.title)}</h5>
           <p style="font-size:13.5px; margin-bottom:8px;">${esc(item.theory)}</p>
           
@@ -1395,14 +1495,25 @@ function renderTrilhaTab(mod){
             <b>📱 O que observar durante a demonstração:</b> ${esc(item.intro)}
           </div>
 
-          <!-- Player de Vídeo -->
-          <div style="border-radius:12px; overflow:hidden; background:#000; margin-bottom:12px; position:relative; padding-top:56.25%;">
-            <iframe src="${item.video}" title="${esc(item.title)}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0; display:block;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          <!-- Player de Vídeo integrado (fica na própria página, sem levar ao YouTube) -->
+          <div oncontextmenu="return false" style="border-radius:12px; overflow:hidden; background:#000; margin-bottom:10px; position:relative; padding-top:56.25%;">
+            <div id="ytplayer-${mod.id}-${idx}" style="position:absolute; top:0; left:0; width:100%; height:100%;"></div>
           </div>
+
+          <!-- Progresso próprio da aula -->
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <div style="flex:1; height:6px; background:var(--line-soft); border-radius:99px; overflow:hidden;">
+              <div id="vprog-${mod.id}-${idx}" style="height:100%; width:${vp.pct||0}%; background:var(--blue); transition:width .2s;"></div>
+            </div>
+            <span id="vpct-${mod.id}-${idx}" style="font-size:11.5px; color:var(--muted); min-width:34px; text-align:right;">${vp.pct||0}%</span>
+            <span id="vdone-${mod.id}-${idx}" style="font-size:11.5px; font-weight:700; color:var(--blue-deep); white-space:nowrap; ${vp.watched?'':'display:none;'}">✅ Aula concluída</span>
+          </div>
+
+          ${hasNext ? `<button class="btn primary" id="vnext-${mod.id}-${idx}" data-next="lesson-${mod.id}-${idx+1}" style="margin-bottom:4px; ${vp.watched?'':'display:none;'}">➡️ Próxima aula</button>` : ''}
 
           <!-- Alerta visual de observação pedagógica -->
           ${item.alert ? `
-          <div style="background:var(--danger-soft); color:var(--ink-2); border:1px solid var(--danger); padding:12px 14px; border-radius:10px; font-weight:600; font-size:13.5px; margin-bottom:12px;">
+          <div style="background:var(--danger-soft); color:var(--ink-2); border:1px solid var(--danger); padding:12px 14px; border-radius:10px; font-weight:600; font-size:13.5px; margin-top:12px;">
             ⚠️ ${esc(item.alert)}
           </div>` : ''}
 
@@ -1430,6 +1541,16 @@ function renderTrilhaTab(mod){
     el.addEventListener("click",(e)=>{ e.stopPropagation(); toggleArticle(el.getAttribute("data-artcheck")); });
     if(el.classList.contains("check")) el.addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggleArticle(el.getAttribute("data-artcheck")); } });
   });
+
+  if(mod.tapStructure){
+    initTapVideos(mod);
+    wrap.querySelectorAll("[id^='vnext-']").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const target=document.getElementById(btn.getAttribute("data-next"));
+        if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
+      });
+    });
+  }
 }
 
 function renderOverviewTab(mod){
